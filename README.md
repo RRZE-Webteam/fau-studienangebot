@@ -1,4 +1,11 @@
-fau-studienangebot
+FAU-STUDIENANGEBOT
 ==================
 
-Studiengangsdatenbank und -verwaltung der FAU.
+WordPress Plugin
+----------------
+
+Studiengangsdatenbank und -verwaltung.
+
+Entwickler und Projektbeteiligte
+- Rolf v. d. Forst, rolf.v.d.forst@fau.de
+- Cathrin Gräf, cathrin.graef@fau.de
