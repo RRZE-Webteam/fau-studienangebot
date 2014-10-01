@@ -21,6 +21,8 @@ class FAU_Studienangebot_Shortcode {
     
     private $taxs;
     
+    private $mitnc;
+    
     private $request_query;
         
     public function __construct() {
@@ -46,7 +48,7 @@ class FAU_Studienangebot_Shortcode {
         
         $default = array();
         $atts = shortcode_atts($default, $atts);
-        
+                
         $this->taxs = array();
         foreach($this->taxonomies as $taxonomy) {
             $get_tax = isset($_GET[self::prefix . $taxonomy]) ? (array) $_GET[self::prefix . $taxonomy] : array();
@@ -54,6 +56,8 @@ class FAU_Studienangebot_Shortcode {
                 $this->taxs[$taxonomy] = array_map('trim', $get_tax);
             }
         }
+        
+        $this->mitnc = isset($_GET[self::prefix . 'mitnc']) ? 1 : 0;
         
         $request_query = array();
         $auswahl = array();
@@ -70,6 +74,10 @@ class FAU_Studienangebot_Shortcode {
                 //$auswahl[] = sprintf('%1$s: %2$s', $cat->labels->singular_name, implode(' + ', $auswahl_value[$key]));
                 $auswahl[] = implode(' + ', $auswahl_value[$key]);
             }
+        }
+        
+        if($this->mitnc) {
+            $request_query[] = self::prefix . 'mitnc=1';
         }
         
         $auswahl = !empty($auswahl) ? sprintf('<p class="studienangebot-auswahl"><b>%1$s</b> %2$s</p>', __('Sie haben ausgewählt:', self::$textdomain), implode(' + ', $auswahl)) : '';
@@ -121,162 +129,15 @@ class FAU_Studienangebot_Shortcode {
             $post = $posts[0];
         }
 
-        if (isset($post)) {
-            $post_id = $post->ID;
-
-            $terms = wp_get_object_terms($post_id, $this->taxonomies);
-
-            $faechergruppe = array();
-            $fakultaet = array();
-            $abschluss = array();
-            $semester = array();
-            $studienort = array();
-
-            foreach ($terms as $term) {
-
-                $term_link = sprintf('%1$s/?%2$s%3$s[]=%4$s', self::$base_permalink, self::prefix, $term->taxonomy, $term->slug);
-                ${$term->taxonomy}[] = '<a href="' . $term_link . '">' . $term->name . '</a>';
-                
-            }
-
-            $faechergruppe = isset($faechergruppe) ? implode(', ', $faechergruppe) : '';
-            $fakultaet = isset($fakultaet) ? implode(', ', $fakultaet) : '';
-            $abschluss = isset($abschluss) ? implode(', ', $abschluss) : '';
-            $semester = isset($semester) ? implode(', ', $semester) : '';
-            $studienort = isset($studienort) ? implode(', ', $studienort) : '';
-
-            $regelstudienzeit = get_post_meta($post_id, 'sa_regelstudienzeit', true);
-            $studiengang_info = get_post_meta($post_id, 'sa_studiengang_info', true);
-            $kombination_info = get_post_meta($post_id, 'sa_kombination_info', true);
-            $kombination_info = trim($kombination_info);
-            $kombination_info = !empty($kombination_info) ? $kombination_info : '-';
-            
-            $zvs_anfaenger = array();
-            $zvs_hoeheres_semester = array();
-            $zvs_terms = wp_get_object_terms($post_id, 'sazvs');
-            if(!empty($zvs_terms)) {
-                if(!is_wp_error($zvs_terms )) {
-                    foreach($zvs_terms as $term) {
-                        $t_id = $term->term_id;
-                        $meta = get_option("sazvs_category_$t_id");                       
-                        if($meta && !empty($meta['linkurl'])) {
-                            $sp = sprintf('<a href="%2$s">%1$s</a>', $meta['linktext'], $meta['linkurl']);
-                        } elseif($meta) {
-                            $sp = $meta['linktext'];
-                        }
-                        if(strpos($term->slug, 'studienanfaenger') === 0) {
-                            $zvs_anfaenger[] = $sp;
-                        } elseif(strpos($term->slug, 'hoeheres-semester') === 0) {
-                            $zvs_hoeheres_semester[] = $sp;
-                        }
-                    }
-                }
-            }
-            $zvs_anfaenger = !empty($zvs_anfaenger) ? implode(', ', $zvs_anfaenger) : '-';
-            $zvs_hoeheres_semester = !empty($zvs_hoeheres_semester) ? implode(', ', $zvs_hoeheres_semester) : '-';
-            
-            $zvs_weiteres = get_post_meta($post_id, 'sa_zvs_weiteres', true);
-            $zvs_weiteres = trim($zvs_weiteres);
-            $zvs_weiteres = !empty($zvs_weiteres) ? $zvs_weiteres : '-';
-            
-            $schwerpunkte = get_post_meta($post_id, 'sa_schwerpunkte', true);
-            $sprachkenntnisse = get_post_meta($post_id, 'sa_sprachkenntnisse', true);
-
-            $deutschkenntnisse = get_post_meta($post_id, 'sa_de_kenntnisse_info', true);
-            $pruefungsamt = get_post_meta($post_id, 'sa_pruefungsamt_info', true);
-            $pruefungsordnung = get_post_meta($post_id, 'sa_pruefungsordnung_info', true);
-
-            $besondere_hinweise = get_post_meta($post_id, 'sa_besondere_hinweise', true);
-            $besondere_hinweise = trim($besondere_hinweise);
-            $besondere_hinweise = !empty($besondere_hinweise) ? $besondere_hinweise : '-';
-
-            $fach = get_post_meta($post_id, 'sa_fach_info', true);
-            
-            $sb_allgemein_info = get_post_meta($post_id, 'sa_sb_allgemein_info', true);
-            $ssc = get_post_meta($post_id, 'sa_ssc_info', true);
-            $gebuehren = get_post_meta($post_id, 'sa_gebuehren', true);
-            $bewerbung = get_post_meta($post_id, 'sa_bewerbung', true);
-            $studiengangskoordination = get_post_meta($post_id, 'sa_studiengangskoordination', true);
-            
-            $einfuehrung = get_post_meta($post_id, 'sa_einfuehrung_info', true);
-            
-            $constant_terms = wp_get_object_terms($post_id, 'saconstant');
-
-            $attribut_terms = wp_get_object_terms($post_id, 'saattribut');
-            
-            echo '<h3>' . esc_html($post->post_title) . '</h3>';
-
-            echo '<table>';
-            echo '<tbody>';
-
-            echo '<tr><td>' . __('Fächergruppe', self::$textdomain) . '</td><td>' . $faechergruppe . '</td></tr>';
-            echo '<tr><td>' . __('Fakultät', self::$textdomain) . '</td><td>' . $fakultaet . '</td></tr>';
-            echo '<tr><td>' . __('Abschluss', self::$textdomain) . '</td><td>' . $abschluss . '</td></tr>';
-            echo '<tr><td>' . __('Regelstudienzeit', self::$textdomain) . '</td><td>' . $regelstudienzeit . '</td></tr>';
-            echo '<tr><td>' . __('Studienbeginn', self::$textdomain) . '</td><td>' . $semester . '</td></tr>';
-            echo '<tr><td>' . __('Studienort', self::$textdomain) . '</td><td>' . $studienort . '</td></tr>';
-            echo '<tr><td>' . __('Kurzinformationen zum Studiengang', self::$textdomain) . '</td><td>' . $studiengang_info . '</td></tr>';
-                        
-            if(!isset($attribut_terms[0]->slug) || $attribut_terms[0]->slug != 'weiterbildungsstudiengang') {
-                echo '<tr><td colspan="2">' . __('Zugangsvoraussetzungen', self::$textdomain) . '</td></tr>';
-                echo '<tr><td style="padding-left: 2em">' . __('für Studienanfänger', self::$textdomain) . '</td><td>' . $zvs_anfaenger . '</td></tr>';
-                echo '<tr><td style="padding-left: 2em">' . __('höheres Semester', self::$textdomain) . '</td><td>' . $zvs_hoeheres_semester . '</td></tr>';
-                echo '<tr><td style="padding-left: 2em">' . __('weitere Voraussetzungen', self::$textdomain) . '</td><td>' . $zvs_weiteres . '</td></tr>';
-                
-                echo '<tr><td>' . __('Kombination', self::$textdomain) . '</td><td>' . $kombination_info . '</td></tr>';
-                echo '<tr><td>' . __('Studienrichtungen/ -schwerpunkte/ -inhalte', self::$textdomain) . '</td><td>' . $schwerpunkte . '</td></tr>';
-                echo '<tr><td>' . __('Sprachkenntnisse', self::$textdomain) . '</td><td>' . $sprachkenntnisse . '</td></tr>';
-                echo '<tr><td>' . __('Deutschkenntnisse für ausländische Studierende', self::$textdomain) . '</td><td>' . $deutschkenntnisse . '</td></tr>';
-                echo '<tr><td>' . __('Studien-und Prüfungsordnung mit Studienplan', self::$textdomain) . '</td><td>' . $pruefungsordnung . '</td></tr>';
-                echo '<tr><td>' . __('Prüfungsamt/Prüfungsbeauftragte', self::$textdomain) . '</td><td>' . $pruefungsamt . '</td></tr>';
-                echo '<tr><td>' . __('Besondere Hinweise', self::$textdomain) . '</td><td>' . $besondere_hinweise . '</td></tr>';
-                echo '<tr><td>' . __('Link zum Fach', self::$textdomain) . '</td><td>' . $fach . '</td></tr>';
-
-                echo '<tr><td colspan="2">' . __('Studienberatung', self::$textdomain) . '</td></tr>';
-                echo '<tr><td style="padding-left: 2em">' . __('Studienberatung allgemein', self::$textdomain) . '</td><td>' . $sb_allgemein_info . '</td></tr>';
-                echo '<tr><td style="padding-left: 2em">' . __('Studien-Service-Center', self::$textdomain) . '</td><td>' . $ssc . '</td></tr>';
-
-                echo '<tr><td>' . __('Einführungsveranstaltungen für Studienanfänger /Vorkurse', self::$textdomain) . '</td><td>' . $einfuehrung . '</td></tr>';
-
-                if(!empty($constant_terms)) {
-                    if(!is_wp_error($constant_terms )) {
-                        foreach($constant_terms as $term) {
-                            $t_id = $term->term_id;
-                            $name = $term->name;
-                            $meta = get_option("saconstant_category_$t_id");                       
-                            if($meta && !empty($meta['linkurl'])) {
-                                printf('<tr><td>%1$s</td><td><a href="%3$s">%2$s</a></td></tr>', $term->name, $meta['linktext'], $meta['linkurl']);
-                            } elseif($meta) {
-                                printf('<tr><tr><td>%1$s</td><td>%2$s</td></tr>', $term->name, $meta['linktext']);
-                            } 
-                        }
-                    }
-                }
-            
-            } else {
-                echo '<tr><td>' . __('Voraussetzungen', self::$textdomain) . '</td><td>' . $zvs_weiteres . '</td></tr>';
-                
-                echo '<tr><td>' . __('Bewerbung', self::$textdomain) . '</td><td>' . $bewerbung . '</td></tr>';
-                
-                echo '<tr><td>' . __('Studienrichtungen/ -schwerpunkte/ -inhalte', self::$textdomain) . '</td><td>' . $schwerpunkte . '</td></tr>';
-                echo '<tr><td>' . __('Sprachkenntnisse', self::$textdomain) . '</td><td>' . $sprachkenntnisse . '</td></tr>';                
-                echo '<tr><td>' . __('Studien-und Prüfungsordnung mit Studienplan', self::$textdomain) . '</td><td>' . $pruefungsordnung . '</td></tr>';
-                echo '<tr><td>' . __('Prüfungsamt/Prüfungsbeauftragte', self::$textdomain) . '</td><td>' . $pruefungsamt . '</td></tr>';
-                echo '<tr><td>' . __('Besondere Hinweise', self::$textdomain) . '</td><td>' . $besondere_hinweise . '</td></tr>';
-                echo '<tr><td>' . __('Link zum Fach', self::$textdomain) . '</td><td>' . $fach . '</td></tr>';
-
-                echo '<tr><td>' . __('Studienberatung allgemein', self::$textdomain) . '</td><td>' . $sb_allgemein_info . '</td></tr>';
-                echo '<tr><td>' . __('Studienfachberatung/Studienkoordination', self::$textdomain) . '</td><td>' . $studiengangskoordination . '</td></tr>';
-                echo '<tr><td>' . __('Studiengebühren und Studentenwerksbeiträge', self::$textdomain) . '</td><td>' . $gebuehren . '</td></tr>';
-
-            }
-            echo '</tbody>';
-            echo '</table>';
-        } 
-
+        if (!empty($post)) {
+            printf('<h3>%s</h3>', $post->post_title);
+            echo FAU_Studienangebot::the_output($post->ID);
+        }
+        
         else {
             echo '<p>' . __('Es konnte nichts gefunden werden.', self::$textdomain) . '</p>';
         }        
+        
     }
     
     private function search() {
@@ -300,6 +161,17 @@ class FAU_Studienangebot_Shortcode {
 
         }
 
+        if($this->mitnc) {
+            $terms = get_terms('sazvs');
+             if (!empty($terms) && !is_wp_error($terms)) {
+                foreach ( $terms as $term ) {
+                    if(strpos(strrev($term->slug), 'cn-') === 0) {
+                        $categories['sazvs'][] = $term->term_id;
+                    }
+                }
+            }
+        }
+        
         if (!empty($categories)) {
 
             $tax_query['relation'] = 'AND';
@@ -330,13 +202,18 @@ class FAU_Studienangebot_Shortcode {
                 'studiengang' => self::$the_permalink . $this->request_query . 'orderby=studiengang&order=' . $order,
                 'abschluss' => self::$the_permalink . $this->request_query . 'orderby=abschluss&order=' . $order,
                 'semester' => self::$the_permalink . $this->request_query . 'orderby=semester&order=' . $order,
-                'studienort' => self::$the_permalink . $this->request_query . 'orderby=studienort&order=' . $order
+                'studienort' => self::$the_permalink . $this->request_query . 'orderby=studienort&order=' . $order,
+                'mitnc' => self::$the_permalink . $this->request_query . 'orderby=sazvs&order=' . $order
             );
 
             echo '<table>';
             echo '<thead>';
             echo '<tr>';
-            echo '<th><a href="' . $th_links['studiengang'] . '">' . __('Studiengang') . '</a></th>', '<th><a href="' . $th_links['abschluss'] . '">' . __('Abschluss') . '</a></th>', '<th><a href="' . $th_links['semester'] . '">' . __('Studienbeginn') . '</a></th>', '<th><a href="' . $th_links['studienort'] . '">' . __('Ort') . '</a></th>';
+            echo '<th><a href="' . $th_links['studiengang'] . '">' . __('Studiengang') . '</a></th>';
+            echo '<th><a href="' . $th_links['abschluss'] . '">' . __('Abschluss') . '</a></th>';
+            echo '<th><a href="' . $th_links['semester'] . '">' . __('Studienbeginn') . '</a></th>';
+            echo '<th><a href="' . $th_links['studienort'] . '">' . __('Ort') . '</a></th>';
+            echo '<th><a href="' . $th_links['mitnc'] . '">' . __('NC für Studienanfänger') . '</a></th>';
             echo '</tr>';
             echo '</thead>';
             echo '<tbody>';
@@ -350,6 +227,7 @@ class FAU_Studienangebot_Shortcode {
                 $abschluss = array();
                 $semester = array();
                 $studienort = array();
+                $mitnc = array();
 
                 foreach ($terms as $term) {
 
@@ -367,17 +245,26 @@ class FAU_Studienangebot_Shortcode {
                     elseif ($term->taxonomy == 'studienort') {
                         $studienort[] = $term->name;
                     }
+                    
+                    elseif ($term->taxonomy == 'sazvs') {
+                        if(strpos($term->slug, 'studienanfaenger') === 0) {
+                            $mitnc[] = $term->name;
+                        }
+                    }
+                    
                 }
 
                 $abschluss = isset($abschluss) ? implode(', ', $abschluss) : '';
                 $semester = isset($semester) ? implode(', ', $semester) : '';
                 $studienort = isset($studienort) ? implode(', ', $studienort) : '';
+                $mitnc = isset($mitnc) ? implode(', ', $mitnc) : '';
 
                 echo '<tr>';
                 echo '<td>' . $studiengang . '</td>',
                 '<td>' . $abschluss . '</td>',
                 '<td>' . $semester . '</td>',
-                '<td>' . $studienort . '</td>';
+                '<td>' . $studienort . '</td>',
+                '<td>' . $mitnc . '</td>';
                 echo '</tr>';
             }
 
@@ -488,6 +375,11 @@ class FAU_Studienangebot_Shortcode {
                         <label for="studienort-<?php echo $term->term_id; ?>"><?php echo $term->name; ?></label>
                     </p>
                 <?php endforeach; ?>
+               <h3><?php _e('NC für Studienanfänger', self::$textdomain); ?></h3>
+                <p>
+                    <input type="checkbox" name="<?php echo self::prefix; ?>mitnc" value="1" id="mitnc" <?php checked($this->mitnc); ?>>
+                    <label for="mitnc"><?php _e('mit NC', self::$textdomain); ?></label>
+                </p>
                 <h3><?php _e('Weitere Eigenschaften', self::$textdomain); ?></h3>
                 <?php $terms = get_terms('saattribut', array('pad_counts' => true, 'hide_empty' => 1)); ?>
                 <?php foreach ($terms as $term): ?>

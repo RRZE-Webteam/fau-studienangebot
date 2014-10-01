@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAU-Studienangebot
  * Description: Studienangebotsverwaltung.
- * Version: 1.0
+ * Version: 2.0
  * Author: Rolf v. d. Forst
  * Author URI: http://blogs.fau.de/webworking/
  * License: GPLv2 or later
@@ -30,8 +30,8 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivate'));
 
 class FAU_Studienangebot {
 
-    protected $version = '1.0';
-
+    protected $version = '2.0';
+    const option_name = '_fau_studienangebot';
     const post_type = 'studienangebot';
     const capability_type = 'studienangebot';
     const author_role = 'studienangebot_author';
@@ -45,6 +45,7 @@ class FAU_Studienangebot {
         'fakultaet',
         'studienort',
         'saattribut',
+        'sazvs',
         'satag'
     );
 
@@ -70,9 +71,11 @@ class FAU_Studienangebot {
         define('SA_SETTINGS_URL', plugins_url('/', __FILE__));
         define('SA_TEXTDOMAIN', self::textdomain);
 
+        add_action('init', array($this, 'sync_roles'));
+
         // register post type
         add_action('init', array($this, 'register_post_type_studienangebot'));
-
+        
         // register taxonomies
         add_action('init', array($this, 'register_taxonomy_studiengang'));
         add_action('init', array($this, 'register_taxonomy_abschluss'));
@@ -145,7 +148,7 @@ class FAU_Studienangebot {
         
         // include custom post type template
         add_filter('template_include', array($this, 'include_studiengang_template'));
-        add_filter('the_content', array($this, 'studiengang_content'));
+        add_filter('the_content', array($this, 'the_content'));
                 
         // initialize Meta Boxes
         add_action('add_meta_boxes', array($this, 'set_meta_boxes'));
@@ -159,6 +162,20 @@ class FAU_Studienangebot {
         include_once(plugin_dir_path(__FILE__) . 'includes/shortcodes/studiengaenge.php'); 
     }
 
+    public function sync_roles() {
+        $author_role = get_role('author');
+        $sa_role = get_role(self::author_role);
+        $default_options = (object) self::default_options();
+        
+        $capabilities = array_merge($author_role->capabilities, $default_options->author_caps);
+        
+        if($sa_role->capabilities != $capabilities) {
+            remove_role(self::author_role);
+            update_option(self::option_name, $capabilities);           
+            add_role(self::author_role, __('Studienangebotautor', self::textdomain), $capabilities);           
+        }
+    }
+    
     public static function add_rewrite_endpoint() {
         add_rewrite_endpoint('studiengang', EP_ROOT | EP_PAGES);
     }
@@ -184,47 +201,53 @@ class FAU_Studienangebot {
         }
     }
 
+    private static function default_options() {
+        $options = array(
+            'author_caps' => array(
+                "edit_" . self::capability_type => true,
+                "read_" . self::capability_type => true,
+                "delete_" . self::capability_type => true,
+                "edit_" . self::capability_type . "s" => true,
+                "edit_others_" . self::capability_type . "s" => true,
+                "publish_" . self::capability_type . "s" => true,
+                "read_private_" . self::capability_type . "s" => true,
+                "delete_" . self::capability_type . "s" => true,
+                "delete_private_" . self::capability_type . "s" => true,
+                "delete_published_" . self::capability_type . "s" => true,
+                "delete_others_" . self::capability_type . "s" => true,
+                "edit_private_" . self::capability_type . "s" => true,
+                "edit_published_" . self::capability_type . "s" => true,                
+            ),
+        );
+
+        return $options;
+    }
+
+    private static function get_options() {
+        $defaults = self::default_options();
+        $options = (array) get_option(self::option_name);
+        $options = wp_parse_args($options, $defaults);
+        $options = array_intersect_key($options, $defaults);
+        return $options;
+    }
+    
     public static function activate($network_wide) {
         self::version_compare();
 
+        $options = (object) self::get_options();
+        
         $administrator_role = get_role('administrator');
         
-        if ($administrator_role) {
-            $administrator_role->add_cap("edit_" . self::capability_type . "");
-            $administrator_role->add_cap("read_" . self::capability_type . "");
-            $administrator_role->add_cap("delete_" . self::capability_type . "");
-            $administrator_role->add_cap("edit_" . self::capability_type . "s");
-            $administrator_role->add_cap("edit_others_" . self::capability_type . "s");
-            $administrator_role->add_cap("publish_" . self::capability_type . "s");
-            $administrator_role->add_cap("read_private_" . self::capability_type . "s");
-            $administrator_role->add_cap("delete_" . self::capability_type . "s");
-            $administrator_role->add_cap("delete_private_" . self::capability_type . "s");
-            $administrator_role->add_cap("delete_published_" . self::capability_type . "s");
-            $administrator_role->add_cap("delete_others_" . self::capability_type . "s");
-            $administrator_role->add_cap("edit_private_" . self::capability_type . "s");
-            $administrator_role->add_cap("edit_published_" . self::capability_type . "s");
+        foreach($options->author_caps as $cap) {
+            $administrator_role->add_cap($cap);
         }
         
         $author_role = get_role('author');
+                
+        $capabilities = array_merge($author_role->capabilities, $options->author_caps);
+        add_option(self::option_name, $capabilities);
         
-        if ($author_role) {
-            $capabilities = $author_role->capabilities;
-            $capabilities["edit_" . self::capability_type . ""] = true;
-            $capabilities["read_" . self::capability_type . ""] = true;
-            $capabilities["delete_" . self::capability_type . ""] = true;
-            $capabilities["edit_" . self::capability_type . "s"] = true;
-            $capabilities["edit_others_" . self::capability_type . "s"] = true;
-            $capabilities["publish_" . self::capability_type . "s"] = true;
-            $capabilities["read_private_" . self::capability_type . "s"] = true;
-            $capabilities["delete_" . self::capability_type . "s"] = true;
-            $capabilities["delete_private_" . self::capability_type . "s"] = true;
-            $capabilities["delete_published_" . self::capability_type . "s"] = true;
-            $capabilities["delete_others_" . self::capability_type . "s"] = true;
-            $capabilities["edit_private_" . self::capability_type . "s"] = true;
-            $capabilities["edit_published_" . self::capability_type . "s"] = true;
-                        
-            add_role(self::author_role, __('Studienangebotautor', self::textdomain), $capabilities);
-        }
+        add_role(self::author_role, __('Studienangebotautor', self::textdomain), $capabilities);
                     
         self::add_rewrite_endpoint();
         flush_rewrite_rules();
@@ -233,23 +256,14 @@ class FAU_Studienangebot {
     public static function deactivate($network_wide) {
         $administrator_role = get_role('administrator');
         
-        if ($administrator_role) {
-            $administrator_role->remove_cap("edit_" . self::capability_type . "");
-            $administrator_role->remove_cap("read_" . self::capability_type . "");
-            $administrator_role->remove_cap("delete_" . self::capability_type . "");
-            $administrator_role->remove_cap("edit_" . self::capability_type . "s");
-            $administrator_role->remove_cap("edit_others_" . self::capability_type . "s");
-            $administrator_role->remove_cap("publish_" . self::capability_type . "s");
-            $administrator_role->remove_cap("read_private_" . self::capability_type . "s");
-            $administrator_role->remove_cap("delete_" . self::capability_type . "s");
-            $administrator_role->remove_cap("delete_private_" . self::capability_type . "s");
-            $administrator_role->remove_cap("delete_published_" . self::capability_type . "s");
-            $administrator_role->remove_cap("delete_others_" . self::capability_type . "s");
-            $administrator_role->remove_cap("edit_private_" . self::capability_type . "s");
-            $administrator_role->remove_cap("edit_published_" . self::capability_type . "s");
+        $options = (object) self::get_options();
+        foreach($options->author_caps as $cap) {
+            $administrator_role->remove_cap($cap);
         }
-        
+                
         remove_role(self::author_role);
+        
+        delete_option(self::option_name);
         
         flush_rewrite_rules();
     }
@@ -978,170 +992,236 @@ class FAU_Studienangebot {
         return $template_path;
     }
     
-    public function studiengang_content($content) {
+    public static function get_link_html($taxonomy, $data, $ul = true) {
+        $output = '-';
+        $items = array();
+        if(!is_array($data)) {
+            $data = array($data);
+        }
+        foreach($data as $val) {
+            $item = self::get_link_term($taxonomy, $val);
+            if(!$item) {
+                continue;
+            }
+            $items[] = $item;
+        }        
+        if($ul && !empty($items)) {
+            if(count($items) > 1) {
+                $output = '<ul><li>' . implode('</li><li>', $items) . '</li></ul>';
+            }
+            else {
+                $output = implode(', ', $items);
+            }
+        }
         
-        if (is_singular(self::post_type)) {            
-            ob_start();
-
+        return $output;
+    }
+    
+    private static function get_link_term($taxonomy, $slug) {
+        $item = '';
+        $term = get_term_by('slug', $slug, $taxonomy);
+        if($term) {
+            $t_id = $term->term_id;
+            $meta = get_option(sprintf('%1$s_category_%2$s', $taxonomy, $t_id));                       
+            if($meta && !empty($meta['linkurl'])) {
+                $item = sprintf('<a href="%2$s">%1$s</a>', $meta['linktext'], $meta['linkurl']);
+            } elseif($meta) {
+                $item = $meta['linktext'];
+            }
+        }
+        return $item;
+    }
+    
+    public static function get_metadata_html($post_id, $data, $ul = true) {
+        $output = '-';
+        $items = '';        
+        if(!is_array($data)) {
+            $data = array($data);
+        }
+        foreach($data as $val) {
+            $item = trim(get_post_meta($post_id, $val, true));
+            if(!$item) {
+                continue;
+            }
+            $items[] = $item;
+        }        
+        if(!empty($items)) {
+            if($ul && count($items) > 1) {
+                $output = '<ul><li>' . implode('</li><li>', $items) . '</li></ul>';
+            }
+            else {
+                $output = implode(', ', $items);
+            }
+        }
+        
+        return $output;
+    }
+    
+    public function the_content($content) {
+        
+        if (is_singular(self::post_type)) {
+            
             $post = get_post();
 
-            if (isset($post)) {
-                $post_id = $post->ID;
-
-                $terms = wp_get_object_terms($post_id, self::$taxonomies);
-
-                $faechergruppe = array();
-                $fakultaet = array();
-                $abschluss = array();
-                $semester = array();
-                $studienort = array();
-
-                foreach ($terms as $term) {
-                    ${$term->taxonomy}[] = $term->name;               
-                }
-
-                $faechergruppe = isset($faechergruppe) ? implode(', ', $faechergruppe) : '';
-                $fakultaet = isset($fakultaet) ? implode(', ', $fakultaet) : '';
-                $abschluss = isset($abschluss) ? implode(', ', $abschluss) : '';
-                $semester = isset($semester) ? implode(', ', $semester) : '';
-                $studienort = isset($studienort) ? implode(', ', $studienort) : '';
-
-                $regelstudienzeit = get_post_meta($post_id, 'sa_regelstudienzeit', true);
-                $studiengang_info = get_post_meta($post_id, 'sa_studiengang_info', true);
-                $kombination_info = get_post_meta($post_id, 'sa_kombination_info', true);
-                $kombination_info = trim($kombination_info);
-                $kombination_info = !empty($kombination_info) ? $kombination_info : '-';
-
-                $zvs_anfaenger = array();
-                $zvs_hoeheres_semester = array();
-                $zvs_terms = wp_get_object_terms($post_id, 'sazvs');
-                if(!empty($zvs_terms)) {
-                    if(!is_wp_error($zvs_terms )) {
-                        foreach($zvs_terms as $term) {
-                            $t_id = $term->term_id;
-                            $meta = get_option("sazvs_category_$t_id");                       
-                            if($meta && !empty($meta['linkurl'])) {
-                                $sp = sprintf('<a href="%2$s">%1$s</a>', $meta['linktext'], $meta['linkurl']);
-                            } elseif($meta) {
-                                $sp = $meta['linktext'];
-                            }
-                            if(strpos($term->slug, 'studienanfaenger') === 0) {
-                                $zvs_anfaenger[] = $sp;
-                            } elseif(strpos($term->slug, 'hoeheres-semester') === 0) {
-                                $zvs_hoeheres_semester[] = $sp;
-                            }
-                        }
-                    }
-                }
-                $zvs_anfaenger = !empty($zvs_anfaenger) ? implode(', ', $zvs_anfaenger) : '-';
-                $zvs_hoeheres_semester = !empty($zvs_hoeheres_semester) ? implode(', ', $zvs_hoeheres_semester) : '-';
-
-                $zvs_weiteres = get_post_meta($post_id, 'sa_zvs_weiteres', true);
-                $zvs_weiteres = trim($zvs_weiteres);
-                $zvs_weiteres = !empty($zvs_weiteres) ? $zvs_weiteres : '-';
-
-                $schwerpunkte = get_post_meta($post_id, 'sa_schwerpunkte', true);
-                $sprachkenntnisse = get_post_meta($post_id, 'sa_sprachkenntnisse', true);
-
-                $deutschkenntnisse = get_post_meta($post_id, 'sa_de_kenntnisse_info', true);
-                $pruefungsamt = get_post_meta($post_id, 'sa_pruefungsamt_info', true);
-                $pruefungsordnung = get_post_meta($post_id, 'sa_pruefungsordnung_info', true);
-
-                $besondere_hinweise = get_post_meta($post_id, 'sa_besondere_hinweise', true);
-                $besondere_hinweise = trim($besondere_hinweise);
-                $besondere_hinweise = !empty($besondere_hinweise) ? $besondere_hinweise : '-';
-
-                $fach = get_post_meta($post_id, 'sa_fach_info', true);
-
-                $sb_allgemein_info = get_post_meta($post_id, 'sa_sb_allgemein_info', true);
-                $ssc = get_post_meta($post_id, 'sa_ssc_info', true);
-                $gebuehren = get_post_meta($post_id, 'sa_gebuehren', true);
-                $bewerbung = get_post_meta($post_id, 'sa_bewerbung', true);
-                $studiengangskoordination = get_post_meta($post_id, 'sa_studiengangskoordination', true);
-
-                $einfuehrung = get_post_meta($post_id, 'sa_einfuehrung_info', true);
-
-                $constant_terms = wp_get_object_terms($post_id, 'saconstant');
-
-                $attribut_terms = wp_get_object_terms($post_id, 'saattribut');
-
-                echo '<table>';
-                echo '<tbody>';
-
-                echo '<tr><td>' . __('Fächergruppe', self::textdomain) . '</td><td>' . $faechergruppe . '</td></tr>';
-                echo '<tr><td>' . __('Fakultät', self::textdomain) . '</td><td>' . $fakultaet . '</td></tr>';
-                echo '<tr><td>' . __('Abschluss', self::textdomain) . '</td><td>' . $abschluss . '</td></tr>';
-                echo '<tr><td>' . __('Regelstudienzeit', self::textdomain) . '</td><td>' . $regelstudienzeit . '</td></tr>';
-                echo '<tr><td>' . __('Studienbeginn', self::textdomain) . '</td><td>' . $semester . '</td></tr>';
-                echo '<tr><td>' . __('Studienort', self::textdomain) . '</td><td>' . $studienort . '</td></tr>';
-                echo '<tr><td>' . __('Kurzinformationen zum Studiengang', self::textdomain) . '</td><td>' . $studiengang_info . '</td></tr>';
-
-                if(!isset($attribut_terms[0]->slug) || $attribut_terms[0]->slug != 'weiterbildungsstudiengang') {
-                    echo '<tr><td colspan="2">' . __('Zugangsvoraussetzungen', self::textdomain) . '</td></tr>';
-                    echo '<tr><td style="padding-left: 2em">' . __('für Studienanfänger', self::textdomain) . '</td><td>' . $zvs_anfaenger . '</td></tr>';
-                    echo '<tr><td style="padding-left: 2em">' . __('höheres Semester', self::textdomain) . '</td><td>' . $zvs_hoeheres_semester . '</td></tr>';
-                    echo '<tr><td style="padding-left: 2em">' . __('weitere Voraussetzungen', self::textdomain) . '</td><td>' . $zvs_weiteres . '</td></tr>';
-
-                    echo '<tr><td>' . __('Kombination', self::textdomain) . '</td><td>' . $kombination_info . '</td></tr>';
-                    echo '<tr><td>' . __('Studienrichtungen/ -schwerpunkte/ -inhalte', self::textdomain) . '</td><td>' . $schwerpunkte . '</td></tr>';
-                    echo '<tr><td>' . __('Sprachkenntnisse', self::textdomain) . '</td><td>' . $sprachkenntnisse . '</td></tr>';
-                    echo '<tr><td>' . __('Deutschkenntnisse für ausländische Studierende', self::textdomain) . '</td><td>' . $deutschkenntnisse . '</td></tr>';
-                    echo '<tr><td>' . __('Studien-und Prüfungsordnung mit Studienplan', self::textdomain) . '</td><td>' . $pruefungsordnung . '</td></tr>';
-                    echo '<tr><td>' . __('Prüfungsamt/Prüfungsbeauftragte', self::textdomain) . '</td><td>' . $pruefungsamt . '</td></tr>';
-                    echo '<tr><td>' . __('Besondere Hinweise', self::textdomain) . '</td><td>' . $besondere_hinweise . '</td></tr>';
-                    echo '<tr><td>' . __('Link zum Fach', self::textdomain) . '</td><td>' . $fach . '</td></tr>';
-
-                    echo '<tr><td colspan="2">' . __('Studienberatung', self::textdomain) . '</td></tr>';
-                    echo '<tr><td style="padding-left: 2em">' . __('Studienberatung allgemein', self::textdomain) . '</td><td>' . $sb_allgemein_info . '</td></tr>';
-                    echo '<tr><td style="padding-left: 2em">' . __('Studien-Service-Center', self::textdomain) . '</td><td>' . $ssc . '</td></tr>';
-
-                    echo '<tr><td>' . __('Einführungsveranstaltungen für Studienanfänger /Vorkurse', self::textdomain) . '</td><td>' . $einfuehrung . '</td></tr>';
-
-                    if(!empty($constant_terms)) {
-                        if(!is_wp_error($constant_terms )) {
-                            foreach($constant_terms as $term) {
-                                $t_id = $term->term_id;
-                                $name = $term->name;
-                                $meta = get_option("saconstant_category_$t_id");                       
-                                if($meta && !empty($meta['linkurl'])) {
-                                    printf('<tr><td>%1$s</td><td><a href="%3$s">%2$s</a></td></tr>', $term->name, $meta['linktext'], $meta['linkurl']);
-                                } elseif($meta) {
-                                    printf('<tr><tr><td>%1$s</td><td>%2$s</td></tr>', $term->name, $meta['linktext']);
-                                } 
-                            }
-                        }
-                    }
-
-                } else {
-                    echo '<tr><td>' . __('Voraussetzungen', self::textdomain) . '</td><td>' . $zvs_weiteres . '</td></tr>';
-
-                    echo '<tr><td>' . __('Bewerbung', self::textdomain) . '</td><td>' . $bewerbung . '</td></tr>';
-
-                    echo '<tr><td>' . __('Studienrichtungen/ -schwerpunkte/ -inhalte', self::textdomain) . '</td><td>' . $schwerpunkte . '</td></tr>';
-                    echo '<tr><td>' . __('Sprachkenntnisse', self::textdomain) . '</td><td>' . $sprachkenntnisse . '</td></tr>';                
-                    echo '<tr><td>' . __('Studien-und Prüfungsordnung mit Studienplan', self::textdomain) . '</td><td>' . $pruefungsordnung . '</td></tr>';
-                    echo '<tr><td>' . __('Prüfungsamt/Prüfungsbeauftragte', self::textdomain) . '</td><td>' . $pruefungsamt . '</td></tr>';
-                    echo '<tr><td>' . __('Besondere Hinweise', self::textdomain) . '</td><td>' . $besondere_hinweise . '</td></tr>';
-                    echo '<tr><td>' . __('Link zum Fach', self::textdomain) . '</td><td>' . $fach . '</td></tr>';
-
-                    echo '<tr><td>' . __('Studienberatung allgemein', self::textdomain) . '</td><td>' . $sb_allgemein_info . '</td></tr>';
-                    echo '<tr><td>' . __('Studienfachberatung/Studienkoordination', self::textdomain) . '</td><td>' . $studiengangskoordination . '</td></tr>';
-                    echo '<tr><td>' . __('Studiengebühren und Studentenwerksbeiträge', self::textdomain) . '</td><td>' . $gebuehren . '</td></tr>';
-
-                }
-                echo '</tbody>';
-                echo '</table>';
+            if (!empty($post)) {
+                printf('<h3>%s</h3>', $post->post_title);
+                $content = self::the_output($post->ID);
             } 
-
-            else {
-                echo '<p>' . __('Es konnte nichts gefunden werden.', self::textdomain) . '</p>';
-            }
-
-            $content = ob_get_clean();
+            
         }
         
         return $content;
         
+    }
+    
+    public static function the_output($post_id) {
+        
+        $terms = wp_get_object_terms($post_id, self::$taxonomies);
+
+        if (empty($terms) || is_wp_error($terms)) {
+            return '<p>' . __('Es konnte nichts gefunden werden.', self::$textdomain) . '</p>';
+        }
+        
+        $faechergruppe = array();
+        $fakultaet = array();
+        $abschluss = array();
+        $semester = array();
+        $studienort = array();
+
+        foreach ($terms as $term) {
+            ${$term->taxonomy}[] = $term->name;               
+        }
+
+        $faechergruppe = isset($faechergruppe) ? implode(', ', $faechergruppe) : '';
+        $fakultaet = isset($fakultaet) ? implode(', ', $fakultaet) : '';
+        $abschluss = isset($abschluss) ? implode(', ', $abschluss) : '';
+        $semester = isset($semester) ? implode(', ', $semester) : '';
+        $studienort = isset($studienort) ? implode(', ', $studienort) : '';
+
+        $regelstudienzeit = self::get_metadata_html($post_id, 'sa_regelstudienzeit');
+        $studiengang_info = self::get_metadata_html($post_id, 'sa_studiengang_info');
+        $kombination_info = self::get_metadata_html($post_id, 'sa_kombination_info');
+
+        $zvs_anfaenger = array();
+        $zvs_hoeheres_semester = array();
+        $zvs_terms = wp_get_object_terms($post_id, 'sazvs');
+        if(!empty($zvs_terms)) {
+            if(!is_wp_error($zvs_terms )) {
+                foreach($zvs_terms as $term) {
+                    $t_id = $term->term_id;
+                    $meta = get_option("sazvs_category_$t_id");                       
+                    if($meta && !empty($meta['linkurl'])) {
+                        $sp = sprintf('<a href="%2$s">%1$s</a>', $meta['linktext'], $meta['linkurl']);
+                    } elseif($meta) {
+                        $sp = $meta['linktext'];
+                    }
+                    if(strpos($term->slug, 'studienanfaenger') === 0) {
+                        $zvs_anfaenger[] = $sp;
+                    } elseif(strpos($term->slug, 'hoeheres-semester') === 0) {
+                        $zvs_hoeheres_semester[] = $sp;
+                    }
+                }
+            }
+        }
+        $zvs_anfaenger = !empty($zvs_anfaenger) ? implode(', ', $zvs_anfaenger) : '-';
+        $zvs_hoeheres_semester = !empty($zvs_hoeheres_semester) ? implode(', ', $zvs_hoeheres_semester) : '-';
+
+        $zvs_weiteres = self::get_metadata_html($post_id, 'sa_zvs_weiteres');
+
+        $schwerpunkte = self::get_metadata_html($post_id, 'sa_schwerpunkte');
+        $sprachkenntnisse = self::get_metadata_html($post_id, 'sa_sprachkenntnisse');
+
+        $deutschkenntnisse = self::get_metadata_html($post_id, 'sa_de_kenntnisse_info');
+
+        $besondere_hinweise = self::get_metadata_html($post_id, 'sa_besondere_hinweise');
+
+        $fach = self::get_metadata_html($post_id, 'sa_fach_info');
+
+        $bewerbung = self::get_metadata_html($post_id, 'sa_bewerbung');
+        $einfuehrung = self::get_metadata_html($post_id, 'sa_einfuehrung_info');
+
+        $attribut_terms = wp_get_object_terms($post_id, 'saattribut');
+
+        $termine = self::get_link_html('saconstant', array('hinweisblatt-zur-einschreibung', 'semester-und-terminplan'));
+        $gebuehren = self::get_link_html('saconstant', 'semesterbeitraege');
+
+        $pruefung = self::get_metadata_html($post_id, array('sa_pruefungsamt_info', 'sa_pruefungsordnung_info'));
+        $studienberatung = self::get_metadata_html($post_id, array('sa_sb_allgemein_info', 'sa_ssc_info'));
+        $w_studienberatung = self::get_metadata_html($post_id, 'sa_ssc_info');
+
+        $studentenvertretung = self::get_link_html('saconstant', 'studentenvertretungfachschaft');
+        $beruflich = self::get_link_html('saconstant', 'berufliche-moeglichkeiten');
+
+        ob_start();
+        
+        echo '<h4>' . __('Auf einen Blick', self::textdomain) . '</h4>';                
+        echo '<table>';
+        //echo '<tr><th>' . __('Fächergruppe', self::textdomain) . '</th><td>' . $faechergruppe . '</td></tr>';
+        echo '<tr><th>' . __('Fakultät', self::textdomain) . '</th><td>' . $fakultaet . '</td></tr>';
+        echo '<tr><th>' . __('Abschluss', self::textdomain) . '</th><td>' . $abschluss . '</td></tr>';
+        echo '<tr><th>' . __('Regelstudienzeit', self::textdomain) . '</th><td>' . $regelstudienzeit . '</td></tr>';
+        echo '<tr><th>' . __('Studienbeginn', self::textdomain) . '</th><td>' . $semester . '</td></tr>';
+        echo '<tr><th>' . __('Studienort', self::textdomain) . '</th><td>' . $studienort . '</td></tr>';
+        echo '<tr><th>' . __('Kurzinformationen zum Studiengang', self::textdomain) . '</th><td>' . $studiengang_info . '</td></tr>';
+        echo '</table>';
+
+        if(!isset($attribut_terms[0]->slug) || $attribut_terms[0]->slug != 'weiterbildungsstudiengang') {
+            echo '<h4>' . __('Aufbau und Struktur', self::textdomain) . '</h4>';
+            echo '<table>';                    
+            echo '<tr><th>' . __('Studieninhalte', self::textdomain) . '</th><td>' . $schwerpunkte . '</td></tr>';
+            echo '<tr><th>' . __('Besondere Hinweise', self::textdomain) . '</th><td>' . $besondere_hinweise . '</td></tr>';
+            if(!empty($kombination_info)) :
+            echo '<tr><th>' . __('Kombinationsmöglichkeiten', self::textdomain) . '</th><td>' . $kombination_info . '</td></tr>';
+            endif;
+            echo '</table>';
+
+            echo '<h4>' . __('Zugangsvoraussetzungen, Bewerbung und Einschreibung', self::textdomain) . '</h4>';
+            echo '<table>';
+            echo '<tr><th>' . __('für Studienanfänger', self::textdomain) . '</th><td>' . $zvs_anfaenger . '</td></tr>';
+            echo '<tr><th>' . __('höheres Semester', self::textdomain) . '</th><td>' . $zvs_hoeheres_semester . '</td></tr>';
+            echo '<tr><th>' . __('Details', self::textdomain) . '</th><td>' . $zvs_weiteres . '</td></tr>';
+            echo '<tr><th>' . __('Sprachkenntnisse', self::textdomain) . '</th><td>' . $sprachkenntnisse . '</td></tr>';
+            echo '<tr><th>' . __('Deutschkenntnisse für ausländische Studierende', self::textdomain) . '</th><td>' . $deutschkenntnisse . '</td></tr>';
+            echo '<tr><th>' . __('Termine', self::textdomain) . '</th><td>' . $termine . '</td></tr>';
+            echo '<tr><th>' . __('Gebühren', self::textdomain) . '</th><td>' . $gebuehren . '</td></tr>';
+            echo '</table>';                    
+
+            echo '<h4>' . __('Organisation', self::textdomain) . '</h4>';
+            echo '<table>';
+            echo '<tr><th>' . __('Studienbeginn', self::textdomain) . '</th><td>' . $einfuehrung . '</td></tr>';
+            echo '<tr><th>' . __('Prüfungsangelegenheiten', self::textdomain) . '</th><td>' . $pruefung . '</td></tr>';
+            echo '<tr><th>' . __('Link zum Studiengang', self::textdomain) . '</th><td>' . $fach . '</td></tr>';
+            echo '<tr><th>' . __('Studienberatung', self::textdomain) . '</th><td>' . $studienberatung . '</td></tr>';
+            echo '<tr><th>' . __('Studentenvertretung/Fachschaft', self::textdomain) . '</th><td>' . $studentenvertretung . '</td></tr>';
+            echo '<tr><th>' . __('Berufliche Möglichkeiten', self::textdomain) . '</th><td>' . $beruflich . '</td></tr>';
+            echo '</table>';
+
+        } 
+
+        else {
+            echo '<h4>' . __('Voraussetzungen und Bewerbung', self::textdomain) . '</h4>';
+            echo '<table>';
+            echo '<tr><th>' . __('Zugangsvoraussetzungen', self::textdomain) . '</th><td>' . $zvs_weiteres . '</td></tr>';
+            echo '<tr><th>' . __('Sprachkenntnisse', self::textdomain) . '</th><td>' . $sprachkenntnisse . '</td></tr>';                   
+            echo '<tr><th>' . __('Bewerbung', self::textdomain) . '</th><td>' . $bewerbung . '</td></tr>';
+            echo '</table>';                    
+
+            echo '<h4>' . __('Aufbau und Struktur', self::textdomain) . '</h4>';
+            echo '<table>';
+            echo '<tr><th>' . __('Studieninhalte', self::textdomain) . '</td><td>' . $schwerpunkte . '</td></tr>';
+            echo '<tr><th>' . __('Besondere Hinweise', self::textdomain) . '</th><td>' . $besondere_hinweise . '</td></tr>';
+            echo '</table>';
+
+            echo '<h4>' . __('Organisation', self::textdomain) . '</h4>';
+            echo '<table>';
+            echo '<tr><th>' . __('Prüfungsangelegenheiten', self::textdomain) . '</th><td>' . $pruefung . '</td></tr>';
+            echo '<tr><th>' . __('Link zum Studiengang', self::textdomain) . '</th><td>' . $fach . '</td></tr>';
+            echo '<tr><th>' . __('Studienfachberatung / Studienkoordination', self::textdomain) . '</th><td>' . $w_studienberatung . '</td></tr>';
+            echo '<tr><th>' . __('Studiengebühren und Studentenwerksbeiträge', self::textdomain) . '</th><td>' . $gebuehren . '</td></tr>';
+            echo '</table>';
+        }
+        
+        return ob_get_clean();
     }
     
 }

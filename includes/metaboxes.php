@@ -42,13 +42,13 @@ function studienangebot_metaboxes(array $meta_boxes) {
                 'name' => __('Fächergruppe', SA_TEXTDOMAIN),
                 'id' => $prefix . 'faechergruppe_taxonomy',
                 'taxonomy' => 'faechergruppe',
-                'type' => 'taxonomy_select',
+                'type' => 'taxonomy_multicheck',
             ),
             array(
                 'name' => __('Fakultät', SA_TEXTDOMAIN),
                 'id' => $prefix . 'fakultaet_taxonomy',
                 'taxonomy' => 'fakultaet',
-                'type' => 'taxonomy_select',
+                'type' => 'taxonomy_multicheck',
             ),
             array(
                 'name' => __('Attribute', SA_TEXTDOMAIN),
