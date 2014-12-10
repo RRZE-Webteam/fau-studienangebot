@@ -74,7 +74,7 @@ class FAU_Studienangebot {
         add_action('init', array($this, 'sync_roles'));
 
         // register post type
-        add_action('init', array($this, 'register_post_type_studienangebot'));
+        add_action('init', array(__CLASS__, 'register_post_type_studienangebot'));
         
         // register taxonomies
         add_action('init', array($this, 'register_taxonomy_studiengang'));
@@ -250,6 +250,7 @@ class FAU_Studienangebot {
         add_role(self::author_role, __('Studienangebotautor', self::textdomain), $capabilities);
                     
         self::add_rewrite_endpoint();
+        self::register_post_type_studienangebot();
         flush_rewrite_rules();
     }
 
@@ -268,7 +269,7 @@ class FAU_Studienangebot {
         flush_rewrite_rules();
     }
     
-    public function register_post_type_studienangebot() {
+    public static function register_post_type_studienangebot() {
         $supports = array('title', 'author', 'thumbnail', 'revisions');
         
         $args = array(
