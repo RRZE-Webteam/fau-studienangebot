@@ -78,14 +78,11 @@ class rrze_Meta_Box_Sanitize {
         return is_array($value) ? array_map('strtotime', $value) : strtotime($value);
     }
 
-    public function text_datetime_timestamp($value, $repeat = false) {
+    public function text_datetime_timestamp($value) {
 
         $test = is_array($value) ? array_filter($value) : '';
         if (empty($test))
             return '';
-
-        if ($repeat_value = $this->_check_repeat($value, __FUNCTION__, $repeat))
-            return $repeat_value;
 
         $value = strtotime($value['date'] . ' ' . $value['time']);
 
@@ -95,14 +92,11 @@ class rrze_Meta_Box_Sanitize {
         return $value;
     }
 
-    public function text_datetime_timestamp_timezone($value, $repeat = false) {
+    public function text_datetime_timestamp_timezone($value) {
 
         $test = is_array($value) ? array_filter($value) : '';
         if (empty($test))
             return '';
-
-        if ($repeat_value = $this->_check_repeat($value, __FUNCTION__, $repeat))
-            return $repeat_value;
 
         $tzstring = null;
 
@@ -127,10 +121,7 @@ class rrze_Meta_Box_Sanitize {
         return is_array($value) ? array_map('wp_kses_post', $value) : wp_kses_post($value);
     }
 
-    public function textarea_code($value, $repeat = false) {
-        if ($repeat_value = $this->_check_repeat($value, __FUNCTION__, $repeat))
-            return $repeat_value;
-
+    public function textarea_code($value) {
         return htmlspecialchars_decode(stripslashes($value));
     }
 

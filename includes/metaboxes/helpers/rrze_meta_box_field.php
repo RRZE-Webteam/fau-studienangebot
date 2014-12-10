@@ -52,7 +52,7 @@ class rrze_Meta_Box_field {
 		return $vars;
 	}
 
-	public function get_data( $field_id = '', $args = array() ) {
+	public function get_data( $field_id = '', $args = array(), $single = true ) {
 		if ( $field_id ) {
 			$args['field_id'] = $field_id;
 		}
@@ -60,15 +60,13 @@ class rrze_Meta_Box_field {
 
 		$data = 'options-page' === $type
 			? rrze_Meta_Box::get_option( $id, $field_id )
-			: get_metadata( $type, $id, $field_id, ( $single || $repeat ));
+			: get_metadata( $type, $id, $field_id, $single );
 
 		return $data;
 	}
 
 	public function update_data( $new_value, $single = true ) {
 		extract( $this->data_args( array( 'new_value' => $new_value, 'single' => $single ) ) );
-
-		$new_value = $repeat ? array_values( $new_value ) : $new_value;
 
 		if ( 'options-page' === $type )
 			return rrze_Meta_Box::update_option( $id, $field_id, $new_value, $single );
@@ -98,9 +96,6 @@ class rrze_Meta_Box_field {
 	}
 
 	public function sanitization_cb( $meta_value ) {
-		if ( empty( $meta_value ) )
-			return $meta_value;
-
 		$cb = $this->maybe_callback( 'sanitization_cb' );
 		if ( false === $cb ) {
 			return $meta_value;

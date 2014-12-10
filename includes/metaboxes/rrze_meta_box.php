@@ -284,20 +284,20 @@ class rrze_Meta_Box {
 
     public static function sanitize_field($field, $new_value = null) {
         $new_value = null !== $new_value ? $new_value : ( isset($_POST[$field->id(true)]) ? $_POST[$field->id(true)] : null );
-
+        
         return $field->sanitization_cb($new_value);
     }
 
     public static function save_field($new_value, $field) {
         $name = $field->id();
         $old = $field->get_data();
-
         if (!empty($new_value) && $new_value != $old) {
             self::$updated[] = $name;
             return $field->update_data($new_value);
         } elseif (empty($new_value)) {
-            if (!empty($old))
+            if (!empty($old)) {
                 self::$updated[] = $name;
+            }
             return $field->remove_data();
         }
     }
