@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAU-Studienangebot
  * Description: Studienangebotsverwaltung.
- * Version: 2.0
+ * Version: 2.1
  * Author: Rolf v. d. Forst
  * Author URI: http://blogs.fau.de/webworking/
  * License: GPLv2 or later
@@ -25,13 +25,14 @@
 
 add_action('plugins_loaded', array('FAU_Studienangebot', 'instance'));
 
-register_activation_hook(__FILE__, array('FAU_Studienangebot', 'activate'));
-register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivate'));
+register_activation_hook(__FILE__, array('FAU_Studienangebot', 'activation'));
+register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation'));
 
 class FAU_Studienangebot {
 
-    protected $version = '2.0';
+    const version = '2.1';
     const option_name = '_fau_studienangebot';
+    const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
     const capability_type = 'studienangebot';
     const author_role = 'studienangebot_author';
@@ -66,11 +67,13 @@ class FAU_Studienangebot {
     }
 
     private function init() {
-        define('SA_SETTINGS_ROOT', dirname(__FILE__));
-        define('SA_SETTINGS_FILE_PATH', CMS_SETTINGS_ROOT . '/' . basename(__FILE__));
-        define('SA_SETTINGS_URL', plugins_url('/', __FILE__));
+        
         define('SA_TEXTDOMAIN', self::textdomain);
 
+        load_plugin_textdomain(self::textdomain, false, sprintf('%s/languages/', dirname(plugin_basename(__FILE__))));
+
+        add_action('init', array($this, 'update_version'));
+        
         add_action('init', array($this, 'sync_roles'));
 
         // register post type
@@ -89,17 +92,21 @@ class FAU_Studienangebot {
         add_action('init', array($this, 'register_taxonomy_satag'));
 
         // register the options
-        add_action('admin_init', array($this, 'settings_init'));
-
-        // Rename "featured image"
+        //add_action('admin_init', array($this, 'settings_init'));
+        //add_action('admin_init', array($this, 'settings_save'), 100);
+        
+        // add settings submenu page
+        //add_action('admin_menu', array($this, 'settings_submenu_page'));
+        
+        // rename "featured image"
         add_action('admin_head-post-new.php', array($this, 'change_thumbnail_html'));
         add_action('admin_head-post.php', array($this, 'change_thumbnail_html'));
 
-        // add a shortcode
-        add_shortcode('studienangebot', array($this, 'create_shortcode'));
-
-        // do i18n stuff
-        add_action('plugins_loaded', array($this, 'setup_i18n'));
+        // add sidebar
+        add_action('widgets_init', array($this, 'register_sidebar'));
+        
+        // enqueue scripts
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 
         // add term meta field
         add_action('abschluss_add_form_fields', array($this, 'abschluss_add_new_meta_field'), 10, 2);
@@ -180,10 +187,6 @@ class FAU_Studienangebot {
         add_rewrite_endpoint('studiengang', EP_ROOT | EP_PAGES);
     }
     
-    public function setup_i18n() {
-        load_plugin_textdomain(self::textdomain, false, dirname(plugin_basename(__FILE__)) . '/languages/');
-    }
-
     private static function version_compare() {
         $error = '';
 
@@ -201,8 +204,14 @@ class FAU_Studienangebot {
         }
     }
 
+    public static function update_version() {
+        if (get_option(self::version_option_name, null) != self::version)
+            update_option(self::version_option_name, self::version);
+    }
+    
     private static function default_options() {
         $options = array(
+            'sa_page' => -1,
             'author_caps' => array(
                 "edit_" . self::capability_type => true,
                 "read_" . self::capability_type => true,
@@ -231,9 +240,11 @@ class FAU_Studienangebot {
         return $options;
     }
     
-    public static function activate($network_wide) {
+    public static function activation($network_wide) {
         self::version_compare();
 
+        update_option(self::version_option_name, self::version);
+        
         $options = (object) self::get_options();
         
         $administrator_role = get_role('administrator');
@@ -254,7 +265,7 @@ class FAU_Studienangebot {
         flush_rewrite_rules();
     }
 
-    public static function deactivate($network_wide) {
+    public static function deactivation($network_wide) {
         $administrator_role = get_role('administrator');
         
         $options = (object) self::get_options();
@@ -315,7 +326,7 @@ class FAU_Studienangebot {
             'supports' => $supports,
             'taxonomies' => array(implode(',', self::$taxonomies)),
             'has_archive' => false,
-            'rewrite' => array( 'slug' => 'studiengang', 'with_front' => false),
+            'rewrite' => array('slug' => 'studiengang', 'with_front' => false),
             'query_var' => true,
             'can_export' => true,
         );
@@ -704,10 +715,77 @@ class FAU_Studienangebot {
         unset($wp_meta_boxes[self::post_type]['side']['core']['saconstantdiv']);
     }
 
-    public function settings_init() {
-        register_setting('studienangebot_settings', 'studienangebot_settings');
+    public function settings_submenu_page() {
+        add_submenu_page('edit.php?post_type=' . self::post_type, __('Einstellungen', self::textdomain), __('Einstellungen', self::textdomain), 'manage_options', 'settings', array($this, 'settings_page'));
     }
+    
+    public function settings_save() {
+        $options = self::get_options();
+        
+        if (!isset($_POST['action'], $_POST['_wpnonce'], $_POST['option_page'], $_POST['_wp_http_referer'], $_POST['submit']) || !is_admin()) {
+            return false;
+        }
+        
+        if ($_POST['action'] != 'update' || $_POST['option_page'] != 'settings') {
+            return false;
+        }
 
+        if(isset($_POST['sa_page'])) {
+            $sa_page = intval($_POST['sa_page']);
+            $options['sa_page'] = $sa_page > 0 ? $sa_page : $options['sa_page'];
+        }
+
+        update_option(self::option_name, $options);
+
+        $referer = add_query_arg('update', 'settings', remove_query_arg(array('message'), wp_get_referer()));
+        wp_redirect($referer);
+        exit;        
+    }
+    
+    public function settings_init() {
+        add_settings_section(self::option_name . '_default_section', false, '__return_false', 'settings');
+        add_settings_field('sa_page', __('Studienangebotseite', self::textdomain), array($this, 'settings_sapage'), 'settings', self::option_name . '_default_section');        
+    }
+    
+    public function settings_page() {
+        if (isset($_GET['update'])) {
+            $messages = array();
+            if ('settings' == $_GET['update']) {
+                $messages[] = __('Einstellungen gespeichert.', self::textdomain);
+            }
+        }        
+        ?>
+        <div class="wrap">
+            <h2><?php _e('Einstellungen', self::textdomain); ?></h2>
+            <?php
+            if (!empty($messages)) {
+                foreach ($messages as $msg) {
+                    printf('<div id="message" class="updated"><p>%s</p></div>', $msg);
+                }
+            }
+            ?>
+            <form action="<?php echo esc_url(menu_page_url('settings', false)); ?>" method="post">
+            <?php
+            settings_fields('settings');
+            do_settings_sections('settings');
+            submit_button(null, 'primary', 'submit', false);
+            ?>
+            </form>
+        </div>
+        <?php
+    }
+    
+    public function settings_sapage() {
+        $options = (object) self::get_options();
+        
+        wp_dropdown_pages(array(
+            'name' => 'sa_page',
+            'selected' => $options->sa_page,
+            'show_option_none' => __('— Auswählen —', self::textdomain),
+            'option_none_value' => -1
+        ));      
+    }
+    
     public function change_thumbnail_html($content) {
         if (self::post_type == $GLOBALS['post_type'])
             add_filter('admin_post_thumbnail_html', array($this, 'replace_content'));
@@ -981,13 +1059,32 @@ class FAU_Studienangebot {
         return '';
     }
     
+    public function register_sidebar() {
+        register_sidebar( array(
+            'name' => __('Studiengang-Sidebar', self::textdomain),
+            'id' => 'sa-sidebar',
+            'description' => __('Widgets in diesem Bereich werden in jedem Studiengang angezeigt.', self::textdomain),
+            'before_widget' => '<div id="%1$s" class="widget %2$s">',
+            'after_widget'  => '</div>',
+            'before_title' => '<h2 class="small">',
+            'after_title' => '</h2>',
+        ));        
+    }
+    
+    public function enqueue_scripts() {
+        wp_enqueue_style('fa-sa', sprintf('%s/studienangebot.css', plugins_url('/css', __FILE__)), false, self::version, 'all');       
+    }
+    
     public function include_studiengang_template($template_path) {
         if (is_singular(self::post_type)) {
-            $template = sprintf('single-%s.php', self::post_type);
-            $template_path = locate_template(array($template));
-            if(!$template_path) {
-                $template_path = plugin_dir_path(__FILE__) . 'includes/templates/' . $template;
+            
+            if (wp_get_theme() == 'FAU') {
+                $template = 'single-fau-page.php';
+            } else {
+                $template = sprintf('single-%s.php', self::post_type);                 
             }
+             
+             $template_path = sprintf('%1$sincludes/templates/%2$s', plugin_dir_path(__FILE__), $template);
         }
 
         return $template_path;
@@ -1065,7 +1162,6 @@ class FAU_Studienangebot {
             $post = get_post();
 
             if (!empty($post)) {
-                printf('<h3>%s</h3>', $post->post_title);
                 $content = self::the_output($post->ID);
             } 
             
@@ -1138,7 +1234,9 @@ class FAU_Studienangebot {
 
         $fach = self::get_metadata_html($post_id, 'sa_fach_info');
 
+        $sa_gebuehren = self::get_metadata_html($post_id, 'sa_gebuehren');
         $bewerbung = self::get_metadata_html($post_id, 'sa_bewerbung');
+        $studiengangskoordination = self::get_metadata_html($post_id, 'sa_studiengangskoordination');
         $einfuehrung = self::get_metadata_html($post_id, 'sa_einfuehrung_info');
 
         $attribut_terms = wp_get_object_terms($post_id, 'saattribut');
@@ -1152,75 +1250,137 @@ class FAU_Studienangebot {
 
         $studentenvertretung = self::get_link_html('saconstant', 'studentenvertretungfachschaft');
         $beruflich = self::get_link_html('saconstant', 'berufliche-moeglichkeiten');
-
-        ob_start();
         
-        echo '<h4>' . __('Auf einen Blick', self::textdomain) . '</h4>';                
-        echo '<table>';
-        //echo '<tr><th>' . __('Fächergruppe', self::textdomain) . '</th><td>' . $faechergruppe . '</td></tr>';
-        echo '<tr><th>' . __('Fakultät', self::textdomain) . '</th><td>' . $fakultaet . '</td></tr>';
-        echo '<tr><th>' . __('Abschluss', self::textdomain) . '</th><td>' . $abschluss . '</td></tr>';
-        echo '<tr><th>' . __('Regelstudienzeit', self::textdomain) . '</th><td>' . $regelstudienzeit . '</td></tr>';
-        echo '<tr><th>' . __('Studienbeginn', self::textdomain) . '</th><td>' . $semester . '</td></tr>';
-        echo '<tr><th>' . __('Studienort', self::textdomain) . '</th><td>' . $studienort . '</td></tr>';
-        echo '<tr><th>' . __('Kurzinformationen zum Studiengang', self::textdomain) . '</th><td>' . $studiengang_info . '</td></tr>';
-        echo '</table>';
-
+        ob_start();      
+        
+        //include('includes/templates/test.html');
+        
+        echo '<div id="accordion-0" class="accordion">';
+       
+        echo '<div class="accordion-group">';        
+        echo '<div class="accordion-heading"><a href="#collapse_0" data-parent="#accordion-0" data-toggle="collapse" class="accordion-toggle">' . __('Auf einen Blick', self::textdomain) . '</a></div>';        
+        echo '<div class="accordion-body" id="collapse_0" style="display: block;">';       
+        echo '<div class="accordion-inner clearfix">';
+        
+        echo '<dl class="dl-horizontal" id="auf-einen-blick">';       
+        //echo '<dt>' . __('Fächergruppe', self::textdomain) . '</dt><dd>' . $faechergruppe . '</dd>';
+        echo '<dt>' . __('Fakultät', self::textdomain) . '</dt><dd>' . $fakultaet . '</dd>';
+        echo '<dt>' . __('Abschluss', self::textdomain) . '</dt><dd>' . $abschluss . '</dd>';
+        echo '<dt>' . __('Regelstudienzeit', self::textdomain) . '</dt><dd>' . $regelstudienzeit . '</dd>';
+        echo '<dt>' . __('Studienbeginn', self::textdomain) . '</dt><dd>' . $semester . '</dd>';
+        echo '<dt>' . __('Studienort', self::textdomain) . '</dt><dd>' . $studienort . '</dd>';
+        echo '<dt>' . __('Kurzinformationen zum Studiengang', self::textdomain) . '</dt><dd>' . $studiengang_info . '</dd>';
+        echo '<dt>' . __('Studiengangsgebühren', self::textdomain) . '</dt><dd>' . $sa_gebuehren . '</dd>';        
+        echo '</dl>';
+        
+        echo '</div>';
+        echo '</div>';
+        echo '</div>';
+        
         if(!isset($attribut_terms[0]->slug) || $attribut_terms[0]->slug != 'weiterbildungsstudiengang') {
-            echo '<h4>' . __('Aufbau und Struktur', self::textdomain) . '</h4>';
-            echo '<table>';                    
-            echo '<tr><th>' . __('Studieninhalte', self::textdomain) . '</th><td>' . $schwerpunkte . '</td></tr>';
-            echo '<tr><th>' . __('Besondere Hinweise', self::textdomain) . '</th><td>' . $besondere_hinweise . '</td></tr>';
+            echo '<div class="accordion-group">';        
+            echo '<div class="accordion-heading"><a href="#collapse_1" data-parent="#accordion-0" data-toggle="collapse" class="accordion-toggle">' . __('Aufbau und Struktur', self::textdomain) . '</a></div>';        
+            echo '<div class="accordion-body" id="collapse_1" style="display: none;">';       
+            echo '<div class="accordion-inner clearfix">';
+            
+            echo '<dl class="dl-horizontal" id="aufbau-und-struktur">';
+            echo '<dt>' . __('Studieninhalte', self::textdomain) . '</dt><dd>' . $schwerpunkte . '</dd>';
+            echo '<dt>' . __('Besondere Hinweise', self::textdomain) . '</dt><dd>' . $besondere_hinweise . '</dd>';
             if(!empty($kombination_info)) :
-            echo '<tr><th>' . __('Kombinationsmöglichkeiten', self::textdomain) . '</th><td>' . $kombination_info . '</td></tr>';
+            echo '<dt>' . __('Kombinationsmöglichkeiten', self::textdomain) . '</dt><dd>' . $kombination_info . '</dd>';
             endif;
-            echo '</table>';
+            echo '</dl>';
 
-            echo '<h4>' . __('Zugangsvoraussetzungen, Bewerbung und Einschreibung', self::textdomain) . '</h4>';
-            echo '<table>';
-            echo '<tr><th>' . __('für Studienanfänger', self::textdomain) . '</th><td>' . $zvs_anfaenger . '</td></tr>';
-            echo '<tr><th>' . __('höheres Semester', self::textdomain) . '</th><td>' . $zvs_hoeheres_semester . '</td></tr>';
-            echo '<tr><th>' . __('Details', self::textdomain) . '</th><td>' . $zvs_weiteres . '</td></tr>';
-            echo '<tr><th>' . __('Sprachkenntnisse', self::textdomain) . '</th><td>' . $sprachkenntnisse . '</td></tr>';
-            echo '<tr><th>' . __('Deutschkenntnisse für ausländische Studierende', self::textdomain) . '</th><td>' . $deutschkenntnisse . '</td></tr>';
-            echo '<tr><th>' . __('Termine', self::textdomain) . '</th><td>' . $termine . '</td></tr>';
-            echo '<tr><th>' . __('Gebühren', self::textdomain) . '</th><td>' . $gebuehren . '</td></tr>';
-            echo '</table>';                    
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+            
+            echo '<div class="accordion-group">';        
+            echo '<div class="accordion-heading"><a href="#collapse_2" data-parent="#accordion-0" data-toggle="collapse" class="accordion-toggle">' . __('Zugangsvoraussetzungen, Bewerbung und Einschreibung', self::textdomain) . '</a></div>';        
+            echo '<div class="accordion-body" id="collapse_2" style="display: none;">';       
+            echo '<div class="accordion-inner clearfix">';
+            
+            echo '<dl class="dl-horizontal" id="zugangsvoraussetzungen">';           
+            echo '<dt>' . __('für Studienanfänger', self::textdomain) . '</dt><dd>' . $zvs_anfaenger . '</dd>';
+            echo '<dt>' . __('höheres Semester', self::textdomain) . '</dt><dd>' . $zvs_hoeheres_semester . '</dd>';
+            echo '<dt>' . __('Details', self::textdomain) . '</dt><dd>' . $zvs_weiteres . '</dd>';
+            echo '<dt>' . __('Sprachkenntnisse', self::textdomain) . '</dt><dd>' . $sprachkenntnisse . '</dd>';
+            echo '<dt>' . __('Deutschkenntnisse für ausländische Studierende', self::textdomain) . '</dt><dd>' . $deutschkenntnisse . '</dd>';
+            echo '<dt>' . __('Termine', self::textdomain) . '</dt><dd>' . $termine . '</dd>';
+            echo '<dt>' . __('Gebühren', self::textdomain) . '</dt><dd>' . $gebuehren . '</dd>';
+            echo '</dl>';                    
 
-            echo '<h4>' . __('Organisation', self::textdomain) . '</h4>';
-            echo '<table>';
-            echo '<tr><th>' . __('Studienbeginn', self::textdomain) . '</th><td>' . $einfuehrung . '</td></tr>';
-            echo '<tr><th>' . __('Prüfungsangelegenheiten', self::textdomain) . '</th><td>' . $pruefung . '</td></tr>';
-            echo '<tr><th>' . __('Link zum Studiengang', self::textdomain) . '</th><td>' . $fach . '</td></tr>';
-            echo '<tr><th>' . __('Studienberatung', self::textdomain) . '</th><td>' . $studienberatung . '</td></tr>';
-            echo '<tr><th>' . __('Studentenvertretung/Fachschaft', self::textdomain) . '</th><td>' . $studentenvertretung . '</td></tr>';
-            echo '<tr><th>' . __('Berufliche Möglichkeiten', self::textdomain) . '</th><td>' . $beruflich . '</td></tr>';
-            echo '</table>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+            
+            echo '<div class="accordion-group">';        
+            echo '<div class="accordion-heading"><a href="#collapse_3" data-parent="#accordion-0" data-toggle="collapse" class="accordion-toggle">' . __('Organisation', self::textdomain) . '</a></div>';        
+            echo '<div class="accordion-body" id="collapse_3" style="display: none;">';       
+            echo '<div class="accordion-inner clearfix">';
+            
+            echo '<dl class="dl-horizontal" id="organisation">';            
+            echo '<dt>' . __('Studienbeginn', self::textdomain) . '</dt><dd>' . $einfuehrung . '</dd>';
+            echo '<dt>' . __('Prüfungsangelegenheiten', self::textdomain) . '</dt><dd>' . $pruefung . '</dd>';
+            echo '<dt>' . __('Link zum Studiengang', self::textdomain) . '</dt><dd>' . $fach . '</dd>';
+            echo '<dt>' . __('Studienberatung', self::textdomain) . '</dt><dd>' . $studienberatung . '</dd>';
+            echo '<dt>' . __('Studentenvertretung/ Fachschaft', self::textdomain) . '</dt><dd>' . $studentenvertretung . '</dd>';
+            echo '<dt>' . __('Berufliche Möglichkeiten', self::textdomain) . '</dt><dd>' . $beruflich . '</dd>';
+            echo '</dl>';
 
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';            
         } 
 
         else {
-            echo '<h4>' . __('Voraussetzungen und Bewerbung', self::textdomain) . '</h4>';
-            echo '<table>';
-            echo '<tr><th>' . __('Zugangsvoraussetzungen', self::textdomain) . '</th><td>' . $zvs_weiteres . '</td></tr>';
-            echo '<tr><th>' . __('Sprachkenntnisse', self::textdomain) . '</th><td>' . $sprachkenntnisse . '</td></tr>';                   
-            echo '<tr><th>' . __('Bewerbung', self::textdomain) . '</th><td>' . $bewerbung . '</td></tr>';
-            echo '</table>';                    
+            echo '<div class="accordion-group">';        
+            echo '<div class="accordion-heading"><a href="#collapse_1" data-parent="#accordion-0" data-toggle="collapse" class="accordion-toggle">' . __('Voraussetzungen und Bewerbung', self::textdomain) . '</a></div>';        
+            echo '<div class="accordion-body" id="collapse_1" style="display: none;">';       
+            echo '<div class="accordion-inner clearfix">';
+            
+            echo '<dl class="dl-horizontal" id="voraussetzungen-und-bewerbung">';           
+            echo '<dt>' . __('Zugangsvoraussetzungen', self::textdomain) . '</dt><dd>' . $zvs_weiteres . '</dd>';
+            echo '<dt>' . __('Sprachkenntnisse', self::textdomain) . '</dt><dd>' . $sprachkenntnisse . '</dd>';                   
+            echo '<dt>' . __('Bewerbungsverfahren', self::textdomain) . '</dt><dd>' . $bewerbung . '</dd>';
+            echo '</dl>';                    
 
-            echo '<h4>' . __('Aufbau und Struktur', self::textdomain) . '</h4>';
-            echo '<table>';
-            echo '<tr><th>' . __('Studieninhalte', self::textdomain) . '</td><td>' . $schwerpunkte . '</td></tr>';
-            echo '<tr><th>' . __('Besondere Hinweise', self::textdomain) . '</th><td>' . $besondere_hinweise . '</td></tr>';
-            echo '</table>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';            
+            
+            echo '<div class="accordion-group">';        
+            echo '<div class="accordion-heading"><a href="#collapse_2" data-parent="#accordion-0" data-toggle="collapse" class="accordion-toggle">' . __('Aufbau und Struktur', self::textdomain) . '</a></div>';        
+            echo '<div class="accordion-body" id="collapse_2" style="display: none;">';       
+            echo '<div class="accordion-inner clearfix">';
+            
+            echo '<dl class="dl-horizontal" id="aufbau-und-struktur">';            
+            echo '<dt>' . __('Studieninhalte', self::textdomain) . '</td><td>' . $schwerpunkte . '</dd>';
+            echo '<dt>' . __('Besondere Hinweise', self::textdomain) . '</dt><dd>' . $besondere_hinweise . '</dd>';
+            echo '</dl>';
 
-            echo '<h4>' . __('Organisation', self::textdomain) . '</h4>';
-            echo '<table>';
-            echo '<tr><th>' . __('Prüfungsangelegenheiten', self::textdomain) . '</th><td>' . $pruefung . '</td></tr>';
-            echo '<tr><th>' . __('Link zum Studiengang', self::textdomain) . '</th><td>' . $fach . '</td></tr>';
-            echo '<tr><th>' . __('Studienfachberatung / Studienkoordination', self::textdomain) . '</th><td>' . $w_studienberatung . '</td></tr>';
-            echo '<tr><th>' . __('Studiengebühren und Studentenwerksbeiträge', self::textdomain) . '</th><td>' . $gebuehren . '</td></tr>';
-            echo '</table>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';            
+            
+            echo '<div class="accordion-group">';        
+            echo '<div class="accordion-heading"><a href="#collapse_3" data-parent="#accordion-0" data-toggle="collapse" class="accordion-toggle">' . __('Organisation', self::textdomain) . '</a></div>';        
+            echo '<div class="accordion-body" id="collapse_3" style="display: none;">';       
+            echo '<div class="accordion-inner clearfix">';
+            
+            echo '<dl class="dl-horizontal" id="organisation">';           
+            echo '<dt>' . __('Prüfungsangelegenheiten', self::textdomain) . '</dt><dd>' . $pruefung . '</dd>';
+            echo '<dt>' . __('Link zum Studiengang', self::textdomain) . '</dt><dd>' . $fach . '</dd>';
+            echo '<dt>' . __('Studiengangskoordination', self::textdomain) . '</dt><dd>' . $studiengangskoordination . '</dd>';
+            echo '<dt>' . __('Studiengebühren und Studentenwerksbeiträge', self::textdomain) . '</dt><dd>' . $gebuehren . '</dd>';
+            echo '</dl>';
+            
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';            
         }
+        
+        echo '</div>';
         
         return ob_get_clean();
     }
