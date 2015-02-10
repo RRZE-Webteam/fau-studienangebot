@@ -1239,7 +1239,7 @@ class FAU_Studienangebot {
         $studiengangskoordination = self::get_metadata_html($post_id, 'sa_studiengangskoordination');
         $einfuehrung = self::get_metadata_html($post_id, 'sa_einfuehrung_info');
 
-        $attribut_terms = wp_get_object_terms($post_id, 'saattribut');
+        $attribut_terms = wp_get_object_terms($post_id, 'saattribut', array('fields' => 'slugs'));
 
         $termine = self::get_link_html('saconstant', array('hinweisblatt-zur-einschreibung', 'semester-und-terminplan'));
         $gebuehren = self::get_link_html('saconstant', 'semesterbeitraege');
@@ -1251,9 +1251,7 @@ class FAU_Studienangebot {
         $studentenvertretung = self::get_link_html('saconstant', 'studentenvertretungfachschaft');
         $beruflich = self::get_link_html('saconstant', 'berufliche-moeglichkeiten');
         
-        ob_start();      
-        
-        //include('includes/templates/test.html');
+        ob_start();
         
         echo '<div id="accordion-0" class="accordion">';
        
@@ -1277,7 +1275,7 @@ class FAU_Studienangebot {
         echo '</div>';
         echo '</div>';
         
-        if(!isset($attribut_terms[0]->slug) || $attribut_terms[0]->slug != 'weiterbildungsstudiengang') {
+        if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_terms)) {
             echo '<div class="accordion-group">';        
             echo '<div class="accordion-heading"><a href="#collapse_1" data-parent="#accordion-0" data-toggle="collapse" class="accordion-toggle">' . __('Aufbau und Struktur', self::textdomain) . '</a></div>';        
             echo '<div class="accordion-body" id="collapse_1" style="display: none;">';       
@@ -1355,7 +1353,7 @@ class FAU_Studienangebot {
             echo '<div class="accordion-inner clearfix">';
             
             echo '<dl class="dl-horizontal" id="aufbau-und-struktur">';            
-            echo '<dt>' . __('Studieninhalte', self::textdomain) . '</td><td>' . $schwerpunkte . '</dd>';
+            echo '<dt>' . __('Studieninhalte', self::textdomain) . '</dt><dd>' . $schwerpunkte . '</dd>';
             echo '<dt>' . __('Besondere Hinweise', self::textdomain) . '</dt><dd>' . $besondere_hinweise . '</dd>';
             echo '</dl>';
 
