@@ -71,6 +71,7 @@ if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_te
     echo '<dt>' . __('Studienberatung', self::textdomain) . '</dt><dd>' . $studienberatung . '</dd>';
     echo '<dt>' . __('Studentenvertretung/ Fachschaft', self::textdomain) . '</dt><dd>' . $studentenvertretung . '</dd>';
     echo '<dt>' . __('Berufliche Möglichkeiten', self::textdomain) . '</dt><dd>' . $beruflich . '</dd>';
+    echo '<dt>' . __('Studentenwerksbeiträge', self::textdomain) . '</dt><dd>' . $gebuehren . '</dd>';
     echo '</dl>';
 
     echo '</div>';
@@ -115,7 +116,7 @@ if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_te
     echo '<dt>' . __('Prüfungsangelegenheiten', self::textdomain) . '</dt><dd>' . $pruefung . '</dd>';
     echo '<dt>' . __('Link zum Studiengang', self::textdomain) . '</dt><dd>' . $fach . '</dd>';
     echo '<dt>' . __('Studiengangskoordination', self::textdomain) . '</dt><dd>' . $studiengangskoordination . '</dd>';
-    echo '<dt>' . __('Studiengebühren und Studentenwerksbeiträge', self::textdomain) . '</dt><dd>' . $gebuehren . '</dd>';
+    echo '<dt>' . __('Studentenwerksbeiträge', self::textdomain) . '</dt><dd>' . $gebuehren . '</dd>';
     echo '</dl>';
 
     echo '</div>';
