@@ -1,3 +1,18 @@
+table.sa-list {
+    margin: 11px 0;
+}
+
+p.sa-notfound {
+    margin: 0;
+    padding: 11px 0;
+}
+
+span.sa-back-link {
+    font-style:normal;
+    font-size:0.75em;
+    float:right;
+}
+
 .accordion-group dl {
     padding: 0px;
     margin: 0px;

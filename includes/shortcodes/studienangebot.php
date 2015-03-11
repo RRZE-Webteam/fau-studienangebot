@@ -98,7 +98,7 @@ class FAU_Studienangebot_Shortcode {
                     } 
                     
                     else {
-                        echo $auswahl;
+                        //echo $auswahl;
                         $this->search();
                     }
                     ?>
@@ -129,13 +129,16 @@ class FAU_Studienangebot_Shortcode {
             $post = $posts[0];
         }
 
+        $back_link = sprintf('<a href="%1$s">%2$s</a>', self::$the_permalink . $this->request_query, __('Zurück zur Liste', self::$textdomain));
+        
         if (!empty($post)) {
-            printf('<h3>%s</h3>', $post->post_title);
+            printf('<h3>%1$s <span class="sa-back-link">%2$s</span></h3>', $post->post_title, $back_link);            
             echo FAU_Studienangebot::the_output($post->ID);
         }
         
         else {
-            echo '<p>' . __('Es konnte nichts gefunden werden.', self::$textdomain) . '</p>';
+            echo '<p class="sa-notfound">' . __('Es konnte nichts gefunden werden.', self::$textdomain) . '</p>';
+            echo '<p>' . $back_link . '</p>';
         }        
         
     }
@@ -206,7 +209,7 @@ class FAU_Studienangebot_Shortcode {
                 'mitnc' => self::$the_permalink . $this->request_query . 'orderby=sazvs&order=' . $order
             );
 
-            echo '<table>';
+            echo '<table class="sa-list">';
             echo '<thead>';
             echo '<tr>';
             echo '<th><a href="' . $th_links['studiengang'] . '">' . __('Studiengang') . '</a></th>';
@@ -231,7 +234,8 @@ class FAU_Studienangebot_Shortcode {
 
                 foreach ($terms as $term) {
 
-                    $term_link = self::$the_permalink . (empty(self::$permalink_structure) ? '&studiengang=' . $post->post_name : 'studiengang/' . $post->post_name);
+                    //$term_link = self::$the_permalink . (empty(self::$permalink_structure) ? $this->request_query . '&studiengang=' . $post->post_name : 'studiengang/' . $post->post_name . $this->request_query);
+                    $term_link = self::$the_permalink . $this->request_query . 'studiengang=' . $post->post_name;
                     $studiengang = '<a href="' . $term_link . '">' . $post->post_title . '</a>';
 
                     if ($term->taxonomy == 'abschluss') {
