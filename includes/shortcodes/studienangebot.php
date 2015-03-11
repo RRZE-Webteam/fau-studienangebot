@@ -80,7 +80,7 @@ class FAU_Studienangebot_Shortcode {
             $request_query[] = self::prefix . 'mitnc=1';
         }
         
-        $auswahl = !empty($auswahl) ? sprintf('<p class="studienangebot-auswahl"><b>%1$s</b> %2$s</p>', __('Sie haben ausgewählt:', self::$textdomain), implode(' + ', $auswahl)) : '';
+        $auswahl = !empty($auswahl) ? sprintf('<p class="sa-auswahl"><b>%1$s</b> %2$s</p>', __('Sie haben ausgewählt:', self::$textdomain), implode(' + ', $auswahl)) : '';
                 
         $prefix = '?';
         $suffix = !empty($request_query) ? '&' : '';
@@ -98,7 +98,7 @@ class FAU_Studienangebot_Shortcode {
                     } 
                     
                     else {
-                        //echo $auswahl;
+                        echo $auswahl;
                         $this->search();
                     }
                     ?>
