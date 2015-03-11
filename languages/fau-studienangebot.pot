@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FAU-Studienangebot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-04 10:49+0100\n"
+"POT-Creation-Date: 2015-03-11 12:18+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: RRZE-Webteam\n"
@@ -79,13 +79,13 @@ msgid "Studiengänge"
 msgstr ""
 
 #: ../fau-studienangebot.php:342 ../includes/metaboxes.php:18
-#: ../includes/shortcodes/studienangebot.php:212
-#: ../includes/shortcodes/studienangebot.php:317
+#: ../includes/shortcodes/studienangebot.php:215
+#: ../includes/shortcodes/studienangebot.php:321
 #: ../includes/shortcodes/studiengaenge.php:202
 msgid "Studiengang"
 msgstr ""
 
-#: ../fau-studienangebot.php:344 ../includes/shortcodes/studienangebot.php:321
+#: ../fau-studienangebot.php:344 ../includes/shortcodes/studienangebot.php:325
 msgid "Alle Studiengänge"
 msgstr ""
 
@@ -119,8 +119,8 @@ msgid "Abschlüsse"
 msgstr ""
 
 #: ../fau-studienangebot.php:376 ../includes/metaboxes.php:30
-#: ../includes/shortcodes/studienangebot.php:213
-#: ../includes/shortcodes/studienangebot.php:347
+#: ../includes/shortcodes/studienangebot.php:216
+#: ../includes/shortcodes/studienangebot.php:351
 #: ../includes/shortcodes/studiengaenge.php:203
 #: ../includes/templates/content-fau-page.php:13
 #: ../includes/templates/content-studienangebot.php:11
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Orte"
 msgstr ""
 
-#: ../fau-studienangebot.php:444 ../includes/shortcodes/studienangebot.php:215
+#: ../fau-studienangebot.php:444 ../includes/shortcodes/studienangebot.php:218
 #: ../includes/shortcodes/studiengaenge.php:205
 msgid "Ort"
 msgstr ""
@@ -208,7 +208,7 @@ msgid "Fächergruppen"
 msgstr ""
 
 #: ../fau-studienangebot.php:478 ../includes/metaboxes.php:74
-#: ../includes/shortcodes/studienangebot.php:328
+#: ../includes/shortcodes/studienangebot.php:332
 msgid "Fächergruppe"
 msgstr ""
 
@@ -238,7 +238,7 @@ msgid "Fakultäten"
 msgstr ""
 
 #: ../fau-studienangebot.php:512 ../includes/metaboxes.php:24
-#: ../includes/shortcodes/studienangebot.php:337
+#: ../includes/shortcodes/studienangebot.php:341
 #: ../includes/templates/content-fau-page.php:12
 #: ../includes/templates/content-studienangebot.php:10
 msgid "Fakultät"
@@ -467,8 +467,8 @@ msgid "Widgets in diesem Bereich werden in jedem Studiengang angezeigt."
 msgstr ""
 
 #: ../fau-studienangebot.php:1188
-#: ../includes/shortcodes/studienangebot.php:138
-#: ../includes/shortcodes/studienangebot.php:276
+#: ../includes/shortcodes/studienangebot.php:140
+#: ../includes/shortcodes/studienangebot.php:280
 #: ../includes/shortcodes/studiengaenge.php:139
 #: ../includes/shortcodes/studiengaenge.php:266
 msgid "Es konnte nichts gefunden werden."
@@ -484,8 +484,8 @@ msgstr ""
 msgid "Regelstudienzeit"
 msgstr ""
 
-#: ../includes/metaboxes.php:49 ../includes/shortcodes/studienangebot.php:214
-#: ../includes/shortcodes/studienangebot.php:360
+#: ../includes/metaboxes.php:49 ../includes/shortcodes/studienangebot.php:217
+#: ../includes/shortcodes/studienangebot.php:364
 #: ../includes/shortcodes/studiengaenge.php:204
 #: ../includes/templates/content-fau-page.php:15
 #: ../includes/templates/content-fau-page.php:68
@@ -494,7 +494,7 @@ msgstr ""
 msgid "Studienbeginn"
 msgstr ""
 
-#: ../includes/metaboxes.php:55 ../includes/shortcodes/studienangebot.php:369
+#: ../includes/metaboxes.php:55 ../includes/shortcodes/studienangebot.php:373
 #: ../includes/templates/content-fau-page.php:16
 #: ../includes/templates/content-studienangebot.php:14
 msgid "Studienort"
@@ -644,21 +644,25 @@ msgstr ""
 msgid "Sie haben ausgewählt:"
 msgstr ""
 
-#: ../includes/shortcodes/studienangebot.php:216
-#: ../includes/shortcodes/studienangebot.php:378
+#: ../includes/shortcodes/studienangebot.php:132
+msgid "Zurück zur Liste"
+msgstr ""
+
+#: ../includes/shortcodes/studienangebot.php:219
+#: ../includes/shortcodes/studienangebot.php:382
 #: ../includes/shortcodes/studiengaenge.php:206
 msgid "NC für Studienanfänger"
 msgstr ""
 
-#: ../includes/shortcodes/studienangebot.php:381
+#: ../includes/shortcodes/studienangebot.php:385
 msgid "mit NC"
 msgstr ""
 
-#: ../includes/shortcodes/studienangebot.php:383
+#: ../includes/shortcodes/studienangebot.php:387
 msgid "Weitere Eigenschaften"
 msgstr ""
 
-#: ../includes/shortcodes/studienangebot.php:393
+#: ../includes/shortcodes/studienangebot.php:397
 msgid "Auswählen"
 msgstr ""
 
