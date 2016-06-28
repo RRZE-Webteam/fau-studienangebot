@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAU-Studienangebot
  * Description: Studienangebotsverwaltung.
- * Version: 2.2.2
+ * Version: 2.2.3
  * Author: Rolf v. d. Forst
  * Author URI: http://blogs.fau.de/webworking/
  * License: GPLv2 or later
@@ -30,7 +30,7 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation')
 
 class FAU_Studienangebot {
 
-    const version = '2.2.2';
+    const version = '2.2.3';
     const option_name = '_fau_studienangebot';
     const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
@@ -53,8 +53,8 @@ class FAU_Studienangebot {
     protected static $instance = null;
 
     const textdomain = 'studienangebot';
-    const php_version = '5.3'; // Minimal erforderliche PHP-Version
-    const wp_version = '4.1'; // Minimal erforderliche WordPress-Version
+    const php_version = '5.4'; // Minimal erforderliche PHP-Version
+    const wp_version = '4.5'; // Minimal erforderliche WordPress-Version
 
     public static function instance() {
 
