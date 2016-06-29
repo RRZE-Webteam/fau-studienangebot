@@ -15,7 +15,8 @@ echo '<dt>' . __('Regelstudienzeit', self::textdomain) . '</dt><dd>' . $regelstu
 echo '<dt>' . __('Studienbeginn', self::textdomain) . '</dt><dd>' . $semester . '</dd>';
 echo '<dt>' . __('Studienort', self::textdomain) . '</dt><dd>' . $studienort . '</dd>';
 echo '<dt>' . __('Kurzinformationen zum Studiengang', self::textdomain) . '</dt><dd>' . $studiengang_info . '</dd>';
-echo '<dt>' . __('Studiengangsgebühren', self::textdomain) . '</dt><dd>' . $sa_gebuehren . '</dd>';        
+echo '<dt>' . __('Studiengangsgebühren', self::textdomain) . '</dt><dd>' . $sa_gebuehren . '</dd>';  
+echo '<dt>' . __('Studentenwerksbeiträge', self::textdomain) . '</dt><dd>' . $gebuehren . '</dd>';      
 echo '</dl>';
 
 echo '</div>';
@@ -52,7 +53,6 @@ if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_te
     echo '<dt>' . __('Sprachkenntnisse', self::textdomain) . '</dt><dd>' . $sprachkenntnisse . '</dd>';
     echo '<dt>' . __('Deutschkenntnisse für ausländische Studierende', self::textdomain) . '</dt><dd>' . $deutschkenntnisse . '</dd>';
     echo '<dt>' . __('Termine', self::textdomain) . '</dt><dd>' . $termine . '</dd>';
-    echo '<dt>' . __('Gebühren', self::textdomain) . '</dt><dd>' . $gebuehren . '</dd>';
     echo '</dl>';                    
 
     echo '</div>';
@@ -71,7 +71,7 @@ if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_te
     echo '<dt>' . __('Studienberatung', self::textdomain) . '</dt><dd>' . $studienberatung . '</dd>';
     echo '<dt>' . __('Studentenvertretung/ Fachschaft', self::textdomain) . '</dt><dd>' . $studentenvertretung . '</dd>';
     echo '<dt>' . __('Berufliche Möglichkeiten', self::textdomain) . '</dt><dd>' . $beruflich . '</dd>';
-    echo '<dt>' . __('Studentenwerksbeiträge', self::textdomain) . '</dt><dd>' . $gebuehren . '</dd>';
+
     echo '</dl>';
 
     echo '</div>';
@@ -116,7 +116,6 @@ if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_te
     echo '<dt>' . __('Prüfungsangelegenheiten', self::textdomain) . '</dt><dd>' . $pruefung . '</dd>';
     echo '<dt>' . __('Link zum Studiengang', self::textdomain) . '</dt><dd>' . $fach . '</dd>';
     echo '<dt>' . __('Studiengangskoordination', self::textdomain) . '</dt><dd>' . $studiengangskoordination . '</dd>';
-    echo '<dt>' . __('Studentenwerksbeiträge', self::textdomain) . '</dt><dd>' . $gebuehren . '</dd>';
     echo '</dl>';
 
     echo '</div>';
