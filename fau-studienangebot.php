@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAU-Studienangebot
  * Description: Studienangebotsverwaltung.
- * Version: 2.2.4
+ * Version: 2.3.0
  * Author: Rolf v. d. Forst
  * Author URI: http://blogs.fau.de/webworking/
  * License: GPLv2 or later
@@ -30,7 +30,7 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation')
 
 class FAU_Studienangebot {
 
-    const version = '2.2.4';
+    const version = '2.3.0';
     const option_name = '_fau_studienangebot';
     const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
@@ -1211,26 +1211,18 @@ class FAU_Studienangebot {
         $zvs_anfaenger = array();
         $zvs_hoeheres_semester = array();
         $zvs_terms = wp_get_object_terms($post_id, 'sazvs');
-        if(!empty($zvs_terms)) {
-            if(!is_wp_error($zvs_terms )) {
-                foreach($zvs_terms as $term) {
-                    $t_id = $term->term_id;
-                    $meta = get_option("sazvs_category_$t_id");                       
-                    if($meta && !empty($meta['linkurl'])) {
-                        $sp = sprintf('<a href="%2$s">%1$s</a>', $meta['linktext'], $meta['linkurl']);
-                    } elseif($meta) {
-                        $sp = $meta['linktext'];
-                    }
-                    if(strpos($term->slug, 'studienanfaenger') === 0) {
-                        $zvs_anfaenger[] = $sp;
-                    } elseif(strpos($term->slug, 'hoeheres-semester') === 0) {
-                        $zvs_hoeheres_semester[] = $sp;
-                    }
+        if (!is_wp_error($zvs_terms) && !empty($zvs_terms)) {
+            foreach($zvs_terms as $term) {
+                if(strpos($term->slug, 'studienanfaenger') === 0) {
+                    $zvs_anfaenger[] = $term->slug;
+                } elseif(strpos($term->slug, 'hoeheres-semester') === 0) {
+                    $zvs_hoeheres_semester[] = $term->slug;
                 }
+
             }
         }
-        $zvs_anfaenger = !empty($zvs_anfaenger) ? implode(', ', $zvs_anfaenger) : '-';
-        $zvs_hoeheres_semester = !empty($zvs_hoeheres_semester) ? implode(', ', $zvs_hoeheres_semester) : '-';
+        $zvs_anfaenger = self::get_link_html($post_id, 'sazvs', $zvs_anfaenger);
+        $zvs_hoeheres_semester = self::get_link_html($post_id, 'sazvs', $zvs_hoeheres_semester);
 
         $zvs_weiteres = self::get_metadata_html($post_id, 'sa_zvs_weiteres');
 

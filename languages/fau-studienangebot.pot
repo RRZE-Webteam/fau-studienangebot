@@ -1,8 +1,9 @@
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: FAU-Studienangebot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-11 12:18+0100\n"
+"POT-Creation-Date: 2016-08-03 15:29+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: RRZE-Webteam\n"
@@ -15,7 +16,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 1.6.5\n"
+"X-Generator: Poedit 1.8.8\n"
 "X-Poedit-SearchPath-0: ..\n"
 
 #: ../fau-studienangebot.php:182 ../fau-studienangebot.php:261
@@ -79,13 +80,13 @@ msgid "Studiengänge"
 msgstr ""
 
 #: ../fau-studienangebot.php:342 ../includes/metaboxes.php:18
-#: ../includes/shortcodes/studienangebot.php:215
-#: ../includes/shortcodes/studienangebot.php:321
+#: ../includes/shortcodes/studienangebot.php:220
+#: ../includes/shortcodes/studienangebot.php:326
 #: ../includes/shortcodes/studiengaenge.php:202
 msgid "Studiengang"
 msgstr ""
 
-#: ../fau-studienangebot.php:344 ../includes/shortcodes/studienangebot.php:325
+#: ../fau-studienangebot.php:344 ../includes/shortcodes/studienangebot.php:330
 msgid "Alle Studiengänge"
 msgstr ""
 
@@ -119,11 +120,11 @@ msgid "Abschlüsse"
 msgstr ""
 
 #: ../fau-studienangebot.php:376 ../includes/metaboxes.php:30
-#: ../includes/shortcodes/studienangebot.php:216
-#: ../includes/shortcodes/studienangebot.php:351
+#: ../includes/shortcodes/studienangebot.php:221
+#: ../includes/shortcodes/studienangebot.php:356
 #: ../includes/shortcodes/studiengaenge.php:203
 #: ../includes/templates/content-fau-page.php:13
-#: ../includes/templates/content-studienangebot.php:11
+#: ../includes/templates/content-studienangebot.php:8
 msgid "Abschluss"
 msgstr ""
 
@@ -177,7 +178,7 @@ msgstr ""
 msgid "Orte"
 msgstr ""
 
-#: ../fau-studienangebot.php:444 ../includes/shortcodes/studienangebot.php:218
+#: ../fau-studienangebot.php:444 ../includes/shortcodes/studienangebot.php:223
 #: ../includes/shortcodes/studiengaenge.php:205
 msgid "Ort"
 msgstr ""
@@ -208,7 +209,7 @@ msgid "Fächergruppen"
 msgstr ""
 
 #: ../fau-studienangebot.php:478 ../includes/metaboxes.php:74
-#: ../includes/shortcodes/studienangebot.php:332
+#: ../includes/shortcodes/studienangebot.php:337
 msgid "Fächergruppe"
 msgstr ""
 
@@ -238,9 +239,9 @@ msgid "Fakultäten"
 msgstr ""
 
 #: ../fau-studienangebot.php:512 ../includes/metaboxes.php:24
-#: ../includes/shortcodes/studienangebot.php:341
+#: ../includes/shortcodes/studienangebot.php:346
 #: ../includes/templates/content-fau-page.php:12
-#: ../includes/templates/content-studienangebot.php:10
+#: ../includes/templates/content-studienangebot.php:7
 msgid "Fakultät"
 msgstr ""
 
@@ -298,7 +299,7 @@ msgid "ZVS"
 msgstr ""
 
 #: ../fau-studienangebot.php:579 ../includes/templates/content-fau-page.php:87
-#: ../includes/templates/content-studienangebot.php:63
+#: ../includes/templates/content-studienangebot.php:48
 msgid "Zugangsvoraussetzungen"
 msgstr ""
 
@@ -466,73 +467,72 @@ msgstr ""
 msgid "Widgets in diesem Bereich werden in jedem Studiengang angezeigt."
 msgstr ""
 
-#: ../fau-studienangebot.php:1188
-#: ../includes/shortcodes/studienangebot.php:140
-#: ../includes/shortcodes/studienangebot.php:280
+#: ../fau-studienangebot.php:1188 ../includes/shortcodes/studienangebot.php:145
+#: ../includes/shortcodes/studienangebot.php:285
 #: ../includes/shortcodes/studiengaenge.php:139
 #: ../includes/shortcodes/studiengaenge.php:266
 msgid "Es konnte nichts gefunden werden."
 msgstr ""
 
 #: ../includes/metaboxes.php:11 ../includes/templates/content-fau-page.php:6
-#: ../includes/templates/content-studienangebot.php:5
+#: ../includes/templates/content-studienangebot.php:4
 msgid "Auf einen Blick"
 msgstr ""
 
 #: ../includes/metaboxes.php:36 ../includes/templates/content-fau-page.php:14
-#: ../includes/templates/content-studienangebot.php:12
+#: ../includes/templates/content-studienangebot.php:9
 msgid "Regelstudienzeit"
 msgstr ""
 
-#: ../includes/metaboxes.php:49 ../includes/shortcodes/studienangebot.php:217
-#: ../includes/shortcodes/studienangebot.php:364
+#: ../includes/metaboxes.php:49 ../includes/shortcodes/studienangebot.php:222
+#: ../includes/shortcodes/studienangebot.php:369
 #: ../includes/shortcodes/studiengaenge.php:204
 #: ../includes/templates/content-fau-page.php:15
 #: ../includes/templates/content-fau-page.php:68
-#: ../includes/templates/content-studienangebot.php:13
-#: ../includes/templates/content-studienangebot.php:50
+#: ../includes/templates/content-studienangebot.php:10
+#: ../includes/templates/content-studienangebot.php:38
 msgid "Studienbeginn"
 msgstr ""
 
-#: ../includes/metaboxes.php:55 ../includes/shortcodes/studienangebot.php:373
+#: ../includes/metaboxes.php:55 ../includes/shortcodes/studienangebot.php:378
 #: ../includes/templates/content-fau-page.php:16
-#: ../includes/templates/content-studienangebot.php:14
+#: ../includes/templates/content-studienangebot.php:11
 msgid "Studienort"
 msgstr ""
 
 #: ../includes/metaboxes.php:61 ../includes/templates/content-fau-page.php:17
-#: ../includes/templates/content-studienangebot.php:15
+#: ../includes/templates/content-studienangebot.php:12
 msgid "Kurzinformationen zum Studiengang"
 msgstr ""
 
-#: ../includes/metaboxes.php:90 ../includes/templates/content-fau-page.php:27
+#: ../includes/metaboxes.php:90 ../includes/templates/content-fau-page.php:28
 #: ../includes/templates/content-fau-page.php:97
-#: ../includes/templates/content-studienangebot.php:20
-#: ../includes/templates/content-studienangebot.php:68
+#: ../includes/templates/content-studienangebot.php:17
+#: ../includes/templates/content-studienangebot.php:52
 msgid "Aufbau und Struktur"
 msgstr ""
 
-#: ../includes/metaboxes.php:97 ../includes/templates/content-fau-page.php:32
+#: ../includes/metaboxes.php:97 ../includes/templates/content-fau-page.php:33
 #: ../includes/templates/content-fau-page.php:102
-#: ../includes/templates/content-studienangebot.php:24
-#: ../includes/templates/content-studienangebot.php:72
+#: ../includes/templates/content-studienangebot.php:19
+#: ../includes/templates/content-studienangebot.php:54
 msgid "Studieninhalte"
 msgstr ""
 
-#: ../includes/metaboxes.php:110 ../includes/templates/content-fau-page.php:33
+#: ../includes/metaboxes.php:110 ../includes/templates/content-fau-page.php:34
 #: ../includes/templates/content-fau-page.php:103
-#: ../includes/templates/content-studienangebot.php:25
-#: ../includes/templates/content-studienangebot.php:73
+#: ../includes/templates/content-studienangebot.php:20
+#: ../includes/templates/content-studienangebot.php:55
 msgid "Besondere Hinweise"
 msgstr ""
 
-#: ../includes/metaboxes.php:123 ../includes/templates/content-fau-page.php:35
-#: ../includes/templates/content-studienangebot.php:28
+#: ../includes/metaboxes.php:123 ../includes/templates/content-fau-page.php:36
+#: ../includes/templates/content-studienangebot.php:23
 msgid "Kombinationsmöglichkeiten"
 msgstr ""
 
-#: ../includes/metaboxes.php:140 ../includes/templates/content-fau-page.php:44
-#: ../includes/templates/content-studienangebot.php:33
+#: ../includes/metaboxes.php:140 ../includes/templates/content-fau-page.php:45
+#: ../includes/templates/content-studienangebot.php:27
 msgid "Zugangsvoraussetzungen, Bewerbung und Einschreibung"
 msgstr ""
 
@@ -540,27 +540,27 @@ msgstr ""
 msgid "Voraussetzungen"
 msgstr ""
 
-#: ../includes/metaboxes.php:153 ../includes/templates/content-fau-page.php:51
-#: ../includes/templates/content-studienangebot.php:39
+#: ../includes/metaboxes.php:153 ../includes/templates/content-fau-page.php:52
+#: ../includes/templates/content-studienangebot.php:31
 msgid "Details"
 msgstr ""
 
-#: ../includes/metaboxes.php:166 ../includes/templates/content-fau-page.php:52
+#: ../includes/metaboxes.php:166 ../includes/templates/content-fau-page.php:53
 #: ../includes/templates/content-fau-page.php:88
-#: ../includes/templates/content-studienangebot.php:40
-#: ../includes/templates/content-studienangebot.php:64
+#: ../includes/templates/content-studienangebot.php:32
+#: ../includes/templates/content-studienangebot.php:49
 msgid "Sprachkenntnisse"
 msgstr ""
 
-#: ../includes/metaboxes.php:179 ../includes/templates/content-fau-page.php:53
-#: ../includes/templates/content-studienangebot.php:41
+#: ../includes/metaboxes.php:179 ../includes/templates/content-fau-page.php:54
+#: ../includes/templates/content-studienangebot.php:33
 msgid "Deutschkenntnisse für ausländische Studierende"
 msgstr ""
 
 #: ../includes/metaboxes.php:196 ../includes/templates/content-fau-page.php:63
 #: ../includes/templates/content-fau-page.php:111
-#: ../includes/templates/content-studienangebot.php:46
-#: ../includes/templates/content-studienangebot.php:76
+#: ../includes/templates/content-studienangebot.php:36
+#: ../includes/templates/content-studienangebot.php:57
 msgid "Organisation"
 msgstr ""
 
@@ -578,8 +578,8 @@ msgstr ""
 
 #: ../includes/metaboxes.php:242 ../includes/templates/content-fau-page.php:70
 #: ../includes/templates/content-fau-page.php:117
-#: ../includes/templates/content-studienangebot.php:52
-#: ../includes/templates/content-studienangebot.php:81
+#: ../includes/templates/content-studienangebot.php:40
+#: ../includes/templates/content-studienangebot.php:60
 msgid "Link zum Studiengang"
 msgstr ""
 
@@ -612,18 +612,17 @@ msgid "Weiterbildung"
 msgstr ""
 
 #: ../includes/metaboxes.php:309 ../includes/templates/content-fau-page.php:18
-#: ../includes/templates/content-studienangebot.php:16
+#: ../includes/templates/content-studienangebot.php:13
 msgid "Studiengangsgebühren"
 msgstr ""
 
 #: ../includes/metaboxes.php:322 ../includes/templates/content-fau-page.php:89
-#: ../includes/templates/content-studienangebot.php:65
+#: ../includes/templates/content-studienangebot.php:50
 msgid "Bewerbungsverfahren"
 msgstr ""
 
-#: ../includes/metaboxes.php:335
-#: ../includes/templates/content-fau-page.php:118
-#: ../includes/templates/content-studienangebot.php:82
+#: ../includes/metaboxes.php:335 ../includes/templates/content-fau-page.php:118
+#: ../includes/templates/content-studienangebot.php:61
 msgid "Studiengangskoordination"
 msgstr ""
 
@@ -640,29 +639,33 @@ msgstr ""
 msgid "Sichern"
 msgstr ""
 
-#: ../includes/shortcodes/studienangebot.php:83
+#: ../includes/shortcodes/studienangebot.php:88
 msgid "Sie haben ausgewählt:"
 msgstr ""
 
-#: ../includes/shortcodes/studienangebot.php:132
+#: ../includes/shortcodes/studienangebot.php:137
 msgid "Zurück zur Liste"
 msgstr ""
 
-#: ../includes/shortcodes/studienangebot.php:219
-#: ../includes/shortcodes/studienangebot.php:382
+#: ../includes/shortcodes/studienangebot.php:224
+#: ../includes/shortcodes/studienangebot.php:387
 #: ../includes/shortcodes/studiengaenge.php:206
 msgid "NC für Studienanfänger"
 msgstr ""
 
-#: ../includes/shortcodes/studienangebot.php:385
+#: ../includes/shortcodes/studienangebot.php:390
 msgid "mit NC"
 msgstr ""
 
-#: ../includes/shortcodes/studienangebot.php:387
+#: ../includes/shortcodes/studienangebot.php:394
+msgid "zulassungsfrei"
+msgstr ""
+
+#: ../includes/shortcodes/studienangebot.php:396
 msgid "Weitere Eigenschaften"
 msgstr ""
 
-#: ../includes/shortcodes/studienangebot.php:397
+#: ../includes/shortcodes/studienangebot.php:406
 msgid "Auswählen"
 msgstr ""
 
@@ -672,56 +675,49 @@ msgid ""
 "dieses Plugin, wenn Sie das Studiengaenge-Shortcode verwenden möchten."
 msgstr ""
 
-#: ../includes/templates/content-fau-page.php:49
-#: ../includes/templates/content-studienangebot.php:37
-msgid "für Studienanfänger"
+#: ../includes/templates/content-fau-page.php:19
+#: ../includes/templates/content-studienangebot.php:14
+msgid "Studentenwerksbeiträge"
 msgstr ""
 
 #: ../includes/templates/content-fau-page.php:50
-#: ../includes/templates/content-studienangebot.php:38
+#: ../includes/templates/content-studienangebot.php:29
+msgid "für Studienanfänger"
+msgstr ""
+
+#: ../includes/templates/content-fau-page.php:51
+#: ../includes/templates/content-studienangebot.php:30
 msgid "höheres Semester"
 msgstr ""
 
-#: ../includes/templates/content-fau-page.php:54
-#: ../includes/templates/content-studienangebot.php:42
-msgid "Termine"
-msgstr ""
-
 #: ../includes/templates/content-fau-page.php:55
-#: ../includes/templates/content-studienangebot.php:43
-msgid "Gebühren"
+#: ../includes/templates/content-studienangebot.php:34
+msgid "Termine"
 msgstr ""
 
 #: ../includes/templates/content-fau-page.php:69
 #: ../includes/templates/content-fau-page.php:116
-#: ../includes/templates/content-studienangebot.php:51
-#: ../includes/templates/content-studienangebot.php:80
+#: ../includes/templates/content-studienangebot.php:39
+#: ../includes/templates/content-studienangebot.php:59
 msgid "Prüfungsangelegenheiten"
 msgstr ""
 
 #: ../includes/templates/content-fau-page.php:71
-#: ../includes/templates/content-studienangebot.php:53
+#: ../includes/templates/content-studienangebot.php:41
 msgid "Studienberatung"
 msgstr ""
 
 #: ../includes/templates/content-fau-page.php:72
-#: ../includes/templates/content-studienangebot.php:54
+#: ../includes/templates/content-studienangebot.php:42
 msgid "Studentenvertretung/ Fachschaft"
 msgstr ""
 
 #: ../includes/templates/content-fau-page.php:73
-#: ../includes/templates/content-studienangebot.php:55
+#: ../includes/templates/content-studienangebot.php:43
 msgid "Berufliche Möglichkeiten"
 msgstr ""
 
-#: ../includes/templates/content-fau-page.php:74
-#: ../includes/templates/content-fau-page.php:119
-#: ../includes/templates/content-studienangebot.php:56
-#: ../includes/templates/content-studienangebot.php:83
-msgid "Studentenwerksbeiträge"
-msgstr ""
-
 #: ../includes/templates/content-fau-page.php:82
-#: ../includes/templates/content-studienangebot.php:59
+#: ../includes/templates/content-studienangebot.php:46
 msgid "Voraussetzungen und Bewerbung"
 msgstr ""

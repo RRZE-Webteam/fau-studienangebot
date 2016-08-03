@@ -22,6 +22,7 @@ class FAU_Studienangebot_Shortcode {
     private $taxs;
     
     private $mitnc;
+    private $zulassungsfrei;
     
     private $request_query;
         
@@ -58,6 +59,7 @@ class FAU_Studienangebot_Shortcode {
         }
         
         $this->mitnc = isset($_GET[self::prefix . 'mitnc']) ? 1 : 0;
+        $this->zulassungsfrei = isset($_GET[self::prefix . 'zulassungsfrei']) ? 1 : 0;
         
         $request_query = array();
         $auswahl = array();
@@ -78,6 +80,9 @@ class FAU_Studienangebot_Shortcode {
         
         if($this->mitnc) {
             $request_query[] = self::prefix . 'mitnc=1';
+        }
+        if($this->zulassungsfrei) {
+            $request_query[] = self::prefix . 'zulassungsfrei=1';
         }
         
         $auswahl = !empty($auswahl) ? sprintf('<p class="sa-auswahl"><b>%1$s</b> %2$s</p>', __('Sie haben ausgewählt:', self::$textdomain), implode(' + ', $auswahl)) : '';
@@ -163,15 +168,15 @@ class FAU_Studienangebot_Shortcode {
             }
 
         }
-
-        if($this->mitnc) {
-            $terms = get_terms('sazvs');
-             if (!empty($terms) && !is_wp_error($terms)) {
-                foreach ( $terms as $term ) {
-                    if(strpos(strrev($term->slug), 'cn-') === 0) {
-                        $categories['sazvs'][] = $term->term_id;
-                    }
-                }
+        
+        $terms = get_terms('sazvs');
+         if (!empty($terms) && !is_wp_error($terms)) {
+            foreach ($terms as $term) {
+                if($this->mitnc && strpos($term->slug, 'studienanfaenger-nc') !== FALSE) {
+                    $categories['sazvs'][] = $term->term_id;
+                } elseif($this->zulassungsfrei && strpos($term->slug, 'studienanfaenger') === 0 && strpos($term->slug, 'zulassungsfrei') !== FALSE) {
+                    $categories['sazvs'][] = $term->term_id;
+                }                
             }
         }
         
@@ -258,10 +263,10 @@ class FAU_Studienangebot_Shortcode {
                     
                 }
 
-                $abschluss = isset($abschluss) ? implode(', ', $abschluss) : '';
-                $semester = isset($semester) ? implode(', ', $semester) : '';
-                $studienort = isset($studienort) ? implode(', ', $studienort) : '';
-                $mitnc = isset($mitnc) ? implode(', ', $mitnc) : '';
+                $abschluss = isset($abschluss) ? implode(',<br>', $abschluss) : '';
+                $semester = isset($semester) ? implode(',<br>', $semester) : '';
+                $studienort = isset($studienort) ? implode(',<br>', $studienort) : '';
+                $mitnc = isset($mitnc) ? implode(',<br>', $mitnc) : '';
 
                 echo '<tr>';
                 echo '<td>' . $studiengang . '</td>',
@@ -384,6 +389,10 @@ class FAU_Studienangebot_Shortcode {
                     <input type="checkbox" name="<?php echo self::prefix; ?>mitnc" value="1" id="mitnc" <?php checked($this->mitnc); ?>>
                     <label for="mitnc"><?php _e('mit NC', self::$textdomain); ?></label>
                 </p>
+                <p>
+                    <input type="checkbox" name="<?php echo self::prefix; ?>zulassungsfrei" value="1" id="mitnc" <?php checked($this->zulassungsfrei); ?>>
+                    <label for="mitnc"><?php _e('zulassungsfrei', self::$textdomain); ?></label>
+                </p>                
                 <h3><?php _e('Weitere Eigenschaften', self::$textdomain); ?></h3>
                 <?php $terms = get_terms('saattribut', array('pad_counts' => true, 'hide_empty' => 1)); ?>
                 <?php foreach ($terms as $term): ?>
