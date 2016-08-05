@@ -1,0 +1,114 @@
+/*
+SASS Datei zur spezifischen gestaltung der Ausgaben des Studienangebot-Plugins
+*/
+/* 
+    Created on : 05.08.2016, 16:20:15
+    Author     : Wolfgang Wiese
+*/
+
+
+@import "mixins";
+
+
+#studienangebot {
+	border: none;
+	margin: 0;
+	padding: 0;
+	
+	select {
+		max-width: 220px;
+	}
+	
+	input[type="checkbox"] {
+		margin-top: -4px;
+	}
+	
+	label {
+		font-size: 12px;
+		line-height: 15px;
+		padding-left: 3px;
+	}
+	
+	p {
+		line-height: 15px;
+		margin-bottom: 0;
+		padding-bottom: 5px;
+		@include hyphens(none);
+	}
+	
+	h4 {
+		padding: 6px 0;
+	}
+	
+	.submit-button {
+		margin-top: 20px;
+	}
+	
+	th {
+	    width: 200px;
+	    vertical-align: top;
+	}
+	
+}
+
+
+table.sa-list {
+    margin: 11px 0;
+}
+
+p.sa-auswahl,
+p.sa-notfound {
+    margin: 0;
+    padding: 11px 0;
+}
+
+span.sa-back-link {
+    font-style:normal;
+    font-size:0.75em;
+    float:right;
+}
+
+.accordion-group dl {
+    padding: 0px;
+    margin: 0px;
+}
+
+.dl-horizontal {
+    overflow: hidden;
+    
+    dl:first-child {
+       border: none;
+    }
+    dt {
+	font-weight: bold;
+	float: left;
+	clear: left;
+	width: 100px;
+	margin-right:-100px;
+	padding-right:100px;
+	width: 35%;
+    }
+    dd {
+	float: left;
+	width: 100px;
+	margin-left: 0;
+	padding-left:100px;
+	margin-left :-100px;
+	width: 65%;
+    }
+    
+    dt, dd {
+	font-size: 14px;
+	color: #444;
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 2.5em;
+	border-top: 1px solid #e5e5e5;
+    }
+    
+}
+.dl-horizontal > :nth-child(1),
+.dl-horizontal > :nth-child(2) {
+    border: none;
+}
+
