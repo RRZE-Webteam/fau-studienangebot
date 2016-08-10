@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAU-Studienangebot
  * Description: Studienangebotsverwaltung.
- * Version: 2.3.1
+ * Version: 2.3.2
  * Author: Rolf v. d. Forst
  * Author URI: http://blogs.fau.de/webworking/
  * License: GPLv2 or later
@@ -30,7 +30,7 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation')
 
 class FAU_Studienangebot {
 
-    const version = '2.3.0';
+    const version = '2.3.2';
     const option_name = '_fau_studienangebot';
     const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
@@ -105,9 +105,11 @@ class FAU_Studienangebot {
         // add sidebar
         add_action('widgets_init', array($this, 'register_sidebar'));
         
-        // enqueue scripts
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 
+	add_action('init', array($this, 'register_script'));
+	// add_action('wp_footer', array($this, 'print_script'));
+	
+	
         // add term meta field
         add_action('abschluss_add_form_fields', array($this, 'abschluss_add_new_meta_field'), 10, 2);
         add_action('abschluss_edit_form_fields', array($this, 'abschluss_edit_meta_field'), 10, 2);
@@ -182,7 +184,7 @@ class FAU_Studienangebot {
             add_role(self::author_role, __('Studienangebotautor', self::textdomain), $capabilities);           
         }
     }
-    
+
     public static function add_rewrite_endpoint() {
         add_rewrite_endpoint('studiengang', EP_ROOT | EP_PAGES);
     }
@@ -1071,9 +1073,23 @@ class FAU_Studienangebot {
         ));        
     }
     
-    public function enqueue_scripts() {
-        wp_enqueue_style('fa-sa', sprintf('%s/studienangebot.css', plugins_url('/css', __FILE__)), false, self::version, 'all');       
+  //  public function enqueue_scripts() {
+    //    wp_enqueue_style('fa-sa', sprintf('%s/studienangebot.css', plugins_url('/css', __FILE__)), false, self::version, 'all');       
+  //  }
+    
+
+    public static function register_script() {
+		wp_register_script('fa-sa-js', plugins_url('/', __FILE__) . 'js/studienangebot.js', false, self::version,true);		
+		wp_register_style( 'fa-sa-style', plugins_url( '/css/studienangebot.css', __FILE__ ) );	
     }
+    public static function print_script() {
+	wp_enqueue_script('fa-sa-js');
+	wp_enqueue_style('fa-sa-style');
+	
+	return;	
+    }
+
+    
     
     public function include_studiengang_template($template_path) {
         if (is_singular(self::post_type)) {
@@ -1175,7 +1191,6 @@ class FAU_Studienangebot {
             } 
             
         }
-        
         return $content;
         
     }
@@ -1185,9 +1200,10 @@ class FAU_Studienangebot {
         $terms = wp_get_object_terms($post_id, self::$taxonomies);
 
         if (empty($terms) || is_wp_error($terms)) {
-            return '<p>' . __('Es konnte nichts gefunden werden.', self::$textdomain) . '</p>';
+            return '<p class="notice-attention">' . __('Es konnte nichts gefunden werden.', self::$textdomain) . '</p>';
         }
         
+
         $faechergruppe = array();
         $fakultaet = array();
         $abschluss = array();

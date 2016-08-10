@@ -51,13 +51,17 @@ class FAU_Studiengaenge_Shortcode {
     public function shortcode($atts) {
 
         if (!class_exists('FAU_Studienangebot')) {
-            return __('Das Plugin FAU-Studienangebot wurde nicht aktiviert. Bitte aktivieren Sie dieses Plugin, wenn Sie das Studiengaenge-Shortcode verwenden möchten.');
+            return __('<p class="notice-attention">Das Plugin FAU-Studienangebot wurde nicht aktiviert. Bitte aktivieren Sie dieses Plugin, wenn Sie das Studiengaenge-Shortcode verwenden möchten.</p>');
         }
+
 
         self::$textdomain = FAU_Studienangebot::textdomain;
                 
         $this->taxonomies = FAU_Studienangebot::$taxonomies;
-        
+
+	add_action('wp_footer', array(FAU_Studienangebot, 'print_script'));
+
+	
         self::$permalink_structure = get_option('permalink_structure');
         self::$url_path = parse_url("//$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]", PHP_URL_PATH);
         self::$the_permalink = empty(self::$permalink_structure) ? get_permalink() : site_url(self::$url_path);

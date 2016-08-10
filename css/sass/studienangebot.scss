@@ -27,6 +27,8 @@ SASS Datei zur spezifischen gestaltung der Ausgaben des Studienangebot-Plugins
 		font-size: 12px;
 		line-height: 15px;
 		padding-left: 3px;
+		float: none; 
+		display: inline;
 	}
 	
 	p {
@@ -48,7 +50,10 @@ SASS Datei zur spezifischen gestaltung der Ausgaben des Studienangebot-Plugins
 	    width: 200px;
 	    vertical-align: top;
 	}
-	
+
+        br { 
+                    display: none;
+       }
 }
 
 
