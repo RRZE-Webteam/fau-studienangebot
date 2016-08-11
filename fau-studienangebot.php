@@ -1073,13 +1073,10 @@ class FAU_Studienangebot {
         ));        
     }
     
-  //  public function enqueue_scripts() {
-    //    wp_enqueue_style('fa-sa', sprintf('%s/studienangebot.css', plugins_url('/css', __FILE__)), false, self::version, 'all');       
-  //  }
-    
+   
 
     public static function register_script() {
-		wp_register_script('fa-sa-js', plugins_url('/', __FILE__) . 'js/studienangebot.js', false, self::version,true);		
+		wp_register_script('fa-sa-js', plugins_url('/', __FILE__) . 'js/studienangebot.min.js',  array('jquery'),  self::version,true);		
 		wp_register_style( 'fa-sa-style', plugins_url( '/css/studienangebot.css', __FILE__ ) );	
     }
     public static function print_script() {
@@ -1269,12 +1266,14 @@ class FAU_Studienangebot {
         
         ob_start();
         
-        if (wp_get_theme() == 'FAU') {
+	$fauthemes = array('FAU', 'FAU-Einrichtungen',  'FAU-Philfak', 'FAU-Natfak', 'FAU-Medfak', 'FAU-RWFak', 'FAU-Techfak');
+	
+	
+        if (in_array(wp_get_theme(), $fauthemes)) {
             $template = 'content-fau-page.php';
         } else {
             $template = sprintf('content-%s.php', self::post_type);                 
         }
-        
         include_once(plugin_dir_path(__FILE__) . 'includes/templates/' . $template);
         
         return ob_get_clean();

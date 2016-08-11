@@ -140,7 +140,7 @@ class FAU_Studiengaenge_Shortcode {
         }
         
         else {
-            echo '<p>' . __('Es konnte nichts gefunden werden.', self::$textdomain) . '</p>';
+            echo '<p class="notice-attention">' . __('Es konnte nichts gefunden werden.', self::$textdomain) . '</p>';
         }        
         
     }

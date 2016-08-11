@@ -73,11 +73,59 @@ span.sa-back-link {
     float:right;
 }
 
-.accordion-group dl {
-    padding: 0px;
-    margin: 0px;
+#studienangebot-result {
+    .accordion-group dl {
+	padding: 0px;
+	margin: 0px;
+    }
 }
 
+.dl-horizontal {
+	dt,
+	dd {
+		border: none;
+		font-size: 14px;
+		line-height: 20px;
+		float: none;
+		width: auto;
+		display: block;
+		padding: 0;
+		margin: 0; 
+		
+		ul, li, p {
+			font-size: 14px;
+			line-height: 20px;
+		}
+		
+		ul, ol {
+			margin-left: 10px;
+		}
+		
+		li {
+			margin-bottom: 0;
+			padding-bottom: 0;
+		}
+		
+		p {
+			padding: 0;
+			margin: 0 !important;
+		}
+	}
+	
+	dt {
+		margin: 5px 0;
+	}
+	
+	dd {
+		margin: 0 0 10px 25px;
+	}
+	
+	a {
+		text-decoration: underline;
+	}
+}
+
+/*
 .dl-horizontal {
     overflow: hidden;
     
@@ -112,6 +160,7 @@ span.sa-back-link {
     }
     
 }
+*/ 
 .dl-horizontal > :nth-child(1),
 .dl-horizontal > :nth-child(2) {
     border: none;

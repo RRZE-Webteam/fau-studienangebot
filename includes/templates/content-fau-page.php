@@ -1,5 +1,6 @@
 <?php
 
+
 echo '<div id="accordion-0" class="accordion">';
 
 echo '<div class="accordion-group">';        
