@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAU-Studienangebot
  * Description: Studienangebotsverwaltung.
- * Version: 2.3.2
+ * Version: 2.3.3
  * Author: Rolf v. d. Forst
  * Author URI: http://blogs.fau.de/webworking/
  * License: GPLv2 or later
@@ -30,7 +30,7 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation')
 
 class FAU_Studienangebot {
 
-    const version = '2.3.2';
+    const version = '2.3.3';
     const option_name = '_fau_studienangebot';
     const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
@@ -53,29 +53,27 @@ class FAU_Studienangebot {
     protected static $instance = null;
 
     const textdomain = 'studienangebot';
-    const php_version = '5.4'; // Minimal erforderliche PHP-Version
-    const wp_version = '4.5'; // Minimal erforderliche WordPress-Version
+    const php_version = '5.5'; // Minimal erforderliche PHP-Version
+    const wp_version = '4.7'; // Minimal erforderliche WordPress-Version
 
     public static function instance() {
-
-        if (null == self::$instance) {
+        if (is_null(self::$instance)) {
             self::$instance = new self;
-            self::$instance->init();
         }
 
         return self::$instance;
     }
 
-    private function init() {
+    private function __construct() {
         
         define('SA_TEXTDOMAIN', self::textdomain);
 
-        load_plugin_textdomain(self::textdomain, false, sprintf('%s/languages/', dirname(plugin_basename(__FILE__))));
+        // Sprachdateien werden eingebunden.
+        self::load_textdomain();
 
-        add_action('init', array($this, 'update_version'));
+        // Aktualisierung des Plugins (ggf).
+        self::update_version();
         
-        add_action('init', array($this, 'sync_roles'));
-
         // register post type
         add_action('init', array(__CLASS__, 'register_post_type_studienangebot'));
         
@@ -171,25 +169,31 @@ class FAU_Studienangebot {
         include_once(plugin_dir_path(__FILE__) . 'includes/shortcodes/studiengaenge.php'); 
     }
 
-    public function sync_roles() {
-        $author_role = get_role('author');
-        $sa_role = get_role(self::author_role);
-        $default_options = (object) self::default_options();
-        
-        $capabilities = array_merge($author_role->capabilities, $default_options->author_caps);
-        
-        if($sa_role->capabilities != $capabilities) {
-            remove_role(self::author_role);
-            update_option(self::option_name, $capabilities);           
-            add_role(self::author_role, __('Studienangebotautor', self::textdomain), $capabilities);           
-        }
-    }
+    public static function sync_roles() {
+        $options = (object) self::get_options();
 
+        $administrator_role = get_role('administrator');
+
+        foreach($options->author_caps as $cap => $grant) {
+            $administrator_role->add_cap($cap, boolval($grant));
+        }
+
+        $author_role = get_role('author');
+                
+        $capabilities = array_merge($author_role->capabilities, $options->author_caps);
+        
+        add_role(self::author_role, __('Studienangebotautor', self::textdomain), $capabilities);
+    }
+    
     public static function add_rewrite_endpoint() {
         add_rewrite_endpoint('studiengang', EP_ROOT | EP_PAGES);
     }
     
-    private static function version_compare() {
+    /*
+     * Überprüft die minimal erforderliche PHP- u. WP-Version.
+     * @return void
+     */
+    private static function system_requirements() {
         $error = '';
 
         if (version_compare(PHP_VERSION, self::php_version, '<')) {
@@ -200,15 +204,25 @@ class FAU_Studienangebot {
             $error = sprintf(__('Ihre Wordpress-Version %s ist veraltet. Bitte aktualisieren Sie mindestens auf die Wordpress-Version %s.', self::textdomain), $GLOBALS['wp_version'], self::wp_version);
         }
 
+        // Wenn die Überprüfung fehlschlägt, dann wird das Plugin automatisch deaktiviert.
         if (!empty($error)) {
             deactivate_plugins(plugin_basename(__FILE__), false, true);
             wp_die($error);
         }
     }
-
-    public static function update_version() {
-        if (get_option(self::version_option_name, null) != self::version)
-            update_option(self::version_option_name, self::version);
+    
+    /*
+     * Aktualisierung des Plugins
+     * @return void
+     */
+    private static function update_version() {
+        $version = get_option(self::version_option_name, '0');
+        
+        if (version_compare($version, self::version, '<')) {
+            // Wird durchgeführt wenn das Plugin aktualisiert muss.
+        }
+        
+        update_option(self::version_option_name, self::version);
     }
     
     private static function default_options() {
@@ -242,32 +256,29 @@ class FAU_Studienangebot {
         return $options;
     }
     
-    public static function activation($network_wide) {
-        self::version_compare();
-
-        update_option(self::version_option_name, self::version);
+    // Einbindung der Sprachdateien.
+    private static function load_textdomain() {
+        load_plugin_textdomain(self::textdomain, false, sprintf('%s/languages/', dirname(plugin_basename(__FILE__))));
+    }
+    
+    public static function activation() {
+        // Sprachdateien werden eingebunden.
+        self::load_textdomain();
         
-        $options = (object) self::get_options();
+        // Überprüft die minimal erforderliche PHP- u. WP-Version.
+        self::system_requirements();
         
-        $administrator_role = get_role('administrator');
+        // Aktualisierung des Plugins (ggf).
+        self::update_version();
         
-        foreach($options->author_caps as $cap) {
-            $administrator_role->add_cap($cap);
-        }
-        
-        $author_role = get_role('author');
-                
-        $capabilities = array_merge($author_role->capabilities, $options->author_caps);
-        add_option(self::option_name, $capabilities);
-        
-        add_role(self::author_role, __('Studienangebotautor', self::textdomain), $capabilities);
+        self::sync_roles();
                     
         self::add_rewrite_endpoint();
         self::register_post_type_studienangebot();
         flush_rewrite_rules();
     }
 
-    public static function deactivation($network_wide) {
+    public static function deactivation() {
         $administrator_role = get_role('administrator');
         
         $options = (object) self::get_options();
@@ -1076,14 +1087,12 @@ class FAU_Studienangebot {
    
 
     public static function register_script() {
-		wp_register_script('fa-sa-js', plugins_url('/', __FILE__) . 'js/studienangebot.min.js',  array('jquery'),  self::version,true);		
-		wp_register_style( 'fa-sa-style', plugins_url( '/css/studienangebot.css', __FILE__ ) );	
+        wp_register_script('fa-sa-js', plugins_url('/', __FILE__) . 'js/studienangebot.min.js',  array('jquery'),  self::version, true);		
+        wp_register_style( 'fa-sa-style', plugins_url( '/css/studienangebot.css', __FILE__ ) );	
     }
     public static function print_script() {
 	wp_enqueue_script('fa-sa-js');
 	wp_enqueue_style('fa-sa-style');
-	
-	return;	
     }
 
     
