@@ -100,7 +100,7 @@ class FAU_Studienangebot_Shortcode {
         ?>
         <div class="row">
             <?php $this->form(); ?>
-            <div class="span9">
+            <div class="col-xs-6 col-sm-9">
                 <div id="studienangebot-result">
                     <?php
                     if(get_query_var('studiengang')) {
@@ -317,7 +317,7 @@ class FAU_Studienangebot_Shortcode {
             }
         }        
         ?>
-        <div class="span3">
+        <div class="col-xs-6 col-sm-3">
 
             <form id="studienangebot" action="<?php the_permalink(); ?>" method="get">
                 <h3><?php _e('Studiengang', self::$textdomain); ?></h3>

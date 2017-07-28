@@ -5,7 +5,7 @@ echo '<div id="accordion-0" class="accordion">';
 
 echo '<div class="accordion-group">';        
 echo '<div class="accordion-heading"><a href="#collapse_0" data-parent="#accordion-0" data-toggle="collapse" class="accordion-toggle">' . __('Auf einen Blick', self::textdomain) . '</a></div>';        
-echo '<div class="accordion-body" id="collapse_0" style="display: block;">';       
+echo '<div class="accordion-body open" id="collapse_0" style="display: block;">';       
 echo '<div class="accordion-inner clearfix">';
 
 echo '<dl class="dl-horizontal" id="auf-einen-blick">';       
