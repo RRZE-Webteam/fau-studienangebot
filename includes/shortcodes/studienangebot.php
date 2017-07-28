@@ -43,7 +43,7 @@ class FAU_Studienangebot_Shortcode {
 		
 	
 	
-	add_action('wp_footer', array(FAU_Studienangebot, 'print_script'));
+	add_action('wp_footer', array( 'FAU_Studienangebot' , 'print_script'));
 	
         self::$permalink_structure = get_option('permalink_structure');
         self::$url_path = parse_url("//$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]", PHP_URL_PATH);
