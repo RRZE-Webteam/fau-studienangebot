@@ -1,5 +1,4 @@
 <?php
-
 echo '<div class="studiengang">';
 echo '<a href="#"><h4>' . __('Auf einen Blick', self::textdomain) . '</h4></a>';
 echo '<dl class="studiengang-list" id="auf-einen-blick">';

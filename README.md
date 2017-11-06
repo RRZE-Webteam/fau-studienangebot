@@ -9,7 +9,7 @@ Studiengangsdatenbank
 Entwickler und Projektbeteiligte
 - Rolf v. d. Forst, rolf.v.d.forst@fau.de
 - Cathrin Gräf, cathrin.graef@fau.de
-
+- Wolfgang Wiese, wolfgang.wiese@fau.de
 
 
 == CSS file compiled by SASS

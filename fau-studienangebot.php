@@ -1,11 +1,14 @@
 <?php
-/**
- * Plugin Name: FAU-Studienangebot
- * Description: Studienangebotsverwaltung.
- * Version: 2.3.6
- * Author: Rolf v. d. Forst
- * Author URI: http://blogs.fau.de/webworking/
- * License: GPLv2 or later
+/*
+ Plugin Name: FAU-Studienangebot
+ Description: Studienangebotsverwaltung.
+ Version: 2.3.7
+ Author: RRZE-Webteam
+ Author URI: https://blogs.fau.de/webworking/
+ License: GNU General Public License v2
+ License URI: http://www.gnu.org/licenses/gpl-2.0.html
+ GitHub Plugin URI: https://github.com/RRZE-Webteam/fau-studienangebot
+ License: GPLv2 or later
  */
 /*
  * This program is free software; you can redistribute it and/or
@@ -30,7 +33,7 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation')
 
 class FAU_Studienangebot {
 
-    const version = '2.3.6';
+    const version = '2.3.7';
     const option_name = '_fau_studienangebot';
     const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
@@ -53,7 +56,7 @@ class FAU_Studienangebot {
     protected static $instance = null;
 
     const textdomain = 'studienangebot';
-    const php_version = '5.5'; // Minimal erforderliche PHP-Version
+    const php_version = '5.6'; // Minimal erforderliche PHP-Version
     const wp_version = '4.7'; // Minimal erforderliche WordPress-Version
 
     public static function instance() {

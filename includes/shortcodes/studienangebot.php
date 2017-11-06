@@ -98,29 +98,30 @@ class FAU_Studienangebot_Shortcode {
 
         ob_start();
         ?>
-        <div class="row">
-            <?php $this->form(); ?>
-            <div class="col-xs-6 col-sm-9">
-                <div id="studienangebot-result">
-                    <?php
-                    if(get_query_var('studiengang')) {
-                        $this->studiengang();
-                    } 
-                    
-                    else {
-                        echo $auswahl;
-                        $this->search();
-                    }
-                    ?>
-                </div>
-            </div>
-        </div>
+	<div  class="fau-studienangebot">
+	    <div class="row">
+		<?php $this->form(); ?>
+		<div class="col-xs-6 col-sm-9">
+		    <div id="studienangebot-result">
+			<?php
+			if(get_query_var('studiengang')) {
+			    $this->studiengang();
+			} 
 
-        <div id="loading">
-            <div id="loading-background"></div>
-            <div id="loading-spinner"></div>
-        </div>
+			else {
+			    echo $auswahl;
+			    $this->search();
+			}
+			?>
+		    </div>
+		</div>
+	    </div>
 
+	    <div id="loading">
+		<div id="loading-background"></div>
+		<div id="loading-spinner"></div>
+	    </div>
+	</div>
         <?php
         return ob_get_clean();
     }

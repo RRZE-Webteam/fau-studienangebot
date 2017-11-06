@@ -1,6 +1,5 @@
 <?php
 
-
 echo '<div id="accordion-0" class="accordion">';
 
 echo '<div class="accordion-group">';        
@@ -8,7 +7,7 @@ echo '<div class="accordion-heading"><a href="#collapse_0" data-parent="#accordi
 echo '<div class="accordion-body open" id="collapse_0" style="display: block;">';       
 echo '<div class="accordion-inner clearfix">';
 
-echo '<dl class="dl-horizontal" id="auf-einen-blick">';       
+echo '<dl id="auf-einen-blick">';       
 //echo '<dt>' . __('Fächergruppe', self::textdomain) . '</dt><dd>' . $faechergruppe . '</dd>';
 echo '<dt>' . __('Fakultät', self::textdomain) . '</dt><dd>' . $fakultaet . '</dd>';
 echo '<dt>' . __('Abschluss', self::textdomain) . '</dt><dd>' . $abschluss . '</dd>';
@@ -30,7 +29,7 @@ if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_te
     echo '<div class="accordion-body" id="collapse_1" style="display: none;">';       
     echo '<div class="accordion-inner clearfix">';
 
-    echo '<dl class="dl-horizontal" id="aufbau-und-struktur">';
+    echo '<dl id="aufbau-und-struktur">';
     echo '<dt>' . __('Studieninhalte', self::textdomain) . '</dt><dd>' . $schwerpunkte . '</dd>';
     echo '<dt>' . __('Besondere Hinweise', self::textdomain) . '</dt><dd>' . $besondere_hinweise . '</dd>';
     if(!empty($kombination_info)) :
@@ -47,7 +46,7 @@ if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_te
     echo '<div class="accordion-body" id="collapse_2" style="display: none;">';       
     echo '<div class="accordion-inner clearfix">';
 
-    echo '<dl class="dl-horizontal" id="zugangsvoraussetzungen">';           
+    echo '<dl id="zugangsvoraussetzungen">';           
     echo '<dt>' . __('für Studienanfänger', self::textdomain) . '</dt><dd>' . $zvs_anfaenger . '</dd>';
     echo '<dt>' . __('höheres Semester', self::textdomain) . '</dt><dd>' . $zvs_hoeheres_semester . '</dd>';
     echo '<dt>' . __('Details', self::textdomain) . '</dt><dd>' . $zvs_weiteres . '</dd>';
@@ -65,7 +64,7 @@ if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_te
     echo '<div class="accordion-body" id="collapse_3" style="display: none;">';       
     echo '<div class="accordion-inner clearfix">';
 
-    echo '<dl class="dl-horizontal" id="organisation">';            
+    echo '<dl id="organisation">';            
     echo '<dt>' . __('Studienbeginn', self::textdomain) . '</dt><dd>' . $einfuehrung . '</dd>';
     echo '<dt>' . __('Prüfungsangelegenheiten', self::textdomain) . '</dt><dd>' . $pruefung . '</dd>';
     echo '<dt>' . __('Link zum Studiengang', self::textdomain) . '</dt><dd>' . $fach . '</dd>';
@@ -84,7 +83,7 @@ if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_te
     echo '<div class="accordion-body" id="collapse_1" style="display: none;">';       
     echo '<div class="accordion-inner clearfix">';
 
-    echo '<dl class="dl-horizontal" id="voraussetzungen-und-bewerbung">';           
+    echo '<dl id="voraussetzungen-und-bewerbung">';           
     echo '<dt>' . __('Zugangsvoraussetzungen', self::textdomain) . '</dt><dd>' . $zvs_weiteres . '</dd>';
     echo '<dt>' . __('Sprachkenntnisse', self::textdomain) . '</dt><dd>' . $sprachkenntnisse . '</dd>';                   
     echo '<dt>' . __('Bewerbungsverfahren', self::textdomain) . '</dt><dd>' . $bewerbung . '</dd>';
@@ -99,7 +98,7 @@ if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_te
     echo '<div class="accordion-body" id="collapse_2" style="display: none;">';       
     echo '<div class="accordion-inner clearfix">';
 
-    echo '<dl class="dl-horizontal" id="aufbau-und-struktur">';            
+    echo '<dl id="aufbau-und-struktur">';            
     echo '<dt>' . __('Studieninhalte', self::textdomain) . '</dt><dd>' . $schwerpunkte . '</dd>';
     echo '<dt>' . __('Besondere Hinweise', self::textdomain) . '</dt><dd>' . $besondere_hinweise . '</dd>';
     echo '</dl>';
@@ -113,7 +112,7 @@ if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_te
     echo '<div class="accordion-body" id="collapse_3" style="display: none;">';       
     echo '<div class="accordion-inner clearfix">';
 
-    echo '<dl class="dl-horizontal" id="organisation">';           
+    echo '<dl id="organisation">';           
     echo '<dt>' . __('Prüfungsangelegenheiten', self::textdomain) . '</dt><dd>' . $pruefung . '</dd>';
     echo '<dt>' . __('Link zum Studiengang', self::textdomain) . '</dt><dd>' . $fach . '</dd>';
     echo '<dt>' . __('Studiengangskoordination', self::textdomain) . '</dt><dd>' . $studiengangskoordination . '</dd>';
