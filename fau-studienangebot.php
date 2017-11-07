@@ -2,7 +2,7 @@
 /*
  Plugin Name: FAU-Studienangebot
  Description: Studienangebotsverwaltung.
- Version: 2.3.8
+ Version: 2.3.9
  Author: RRZE-Webteam
  Author URI: https://blogs.fau.de/webworking/
  License: GNU General Public License v2
@@ -33,7 +33,7 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation')
 
 class FAU_Studienangebot {
 
-    const version = '2.3.8';
+    const version = '2.3.9';
     const option_name = '_fau_studienangebot';
     const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
@@ -53,6 +53,17 @@ class FAU_Studienangebot {
         'satag'
     );
 
+    public static $fauthemes = array(
+        'FAU',
+        'FAU-Einrichtungen',
+        'FAU-Einrichtungen-BETA',
+        'FAU-Philfak',
+        'FAU-Natfak',
+        'FAU-Medfak',
+        'FAU-RWFak',
+        'FAU-Techfak'
+    );
+    
     protected static $instance = null;
 
     const textdomain = 'studienangebot';
@@ -1103,7 +1114,7 @@ class FAU_Studienangebot {
     public function include_studiengang_template($template_path) {
         if (is_singular(self::post_type)) {
             
-            if (wp_get_theme() == 'FAU') {
+            if (in_array(wp_get_theme(), self::$fauthemes)) {
                 $template = 'single-fau-page.php';
             } else {
                 $template = sprintf('single-%s.php', self::post_type);                 
@@ -1278,10 +1289,7 @@ class FAU_Studienangebot {
         
         ob_start();
         
-	$fauthemes = array('FAU', 'FAU-Einrichtungen',  'FAU-Philfak', 'FAU-Natfak', 'FAU-Medfak', 'FAU-RWFak', 'FAU-Techfak');
-	
-	
-        if (in_array(wp_get_theme(), $fauthemes)) {
+        if (in_array(wp_get_theme(), self::$fauthemes)) {
             $template = 'content-fau-page.php';
         } else {
             $template = sprintf('content-%s.php', self::post_type);                 
