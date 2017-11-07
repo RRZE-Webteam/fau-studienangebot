@@ -2,7 +2,7 @@
 /*
  Plugin Name: FAU-Studienangebot
  Description: Studienangebotsverwaltung.
- Version: 2.3.9
+ Version: 2.3.10
  Author: RRZE-Webteam
  Author URI: https://blogs.fau.de/webworking/
  License: GNU General Public License v2
@@ -33,7 +33,7 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation')
 
 class FAU_Studienangebot {
 
-    const version = '2.3.9';
+    const version = '2.3.10';
     const option_name = '_fau_studienangebot';
     const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
@@ -167,8 +167,6 @@ class FAU_Studienangebot {
         add_action('init', array(__CLASS__, 'add_rewrite_endpoint'));
         add_action('permalink_structure_changed', array(__CLASS__, 'add_rewrite_endpoint'));
         
-        // include custom post type template
-        add_filter('template_include', array($this, 'include_studiengang_template'));
         add_filter('the_content', array($this, 'the_content'));
                 
         // initialize Meta Boxes
@@ -1108,23 +1106,6 @@ class FAU_Studienangebot {
 	wp_enqueue_script('fa-sa-js');
 	wp_enqueue_style('fa-sa-style');
     }
-
-    
-    
-    public function include_studiengang_template($template_path) {
-        if (is_singular(self::post_type)) {
-            
-            if (in_array(wp_get_theme(), self::$fauthemes)) {
-                $template = 'single-fau-page.php';
-            } else {
-                $template = sprintf('single-%s.php', self::post_type);                 
-            }
-             
-             $template_path = sprintf('%1$sincludes/templates/%2$s', plugin_dir_path(__FILE__), $template);
-        }
-
-        return $template_path;
-    }
     
     private static function get_link_html($post_id, $taxonomy, $data, $ul = true) {
         $output = '-';
@@ -1289,7 +1270,8 @@ class FAU_Studienangebot {
         
         ob_start();
         
-        if (in_array(wp_get_theme(), self::$fauthemes)) {
+        $current_theme = wp_get_theme();
+        if (in_array($current_theme->stylesheet, self::$fauthemes)) {
             $template = 'content-fau-page.php';
         } else {
             $template = sprintf('content-%s.php', self::post_type);                 
