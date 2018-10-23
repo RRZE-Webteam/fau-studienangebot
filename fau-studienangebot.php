@@ -2,7 +2,7 @@
 /*
  Plugin Name: FAU-Studienangebot
  Description: Studienangebotsverwaltung.
- Version: 2.3.10
+ Version: 2.3.11
  Author: RRZE-Webteam
  Author URI: https://blogs.fau.de/webworking/
  License: GNU General Public License v2
