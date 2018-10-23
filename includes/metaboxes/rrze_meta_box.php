@@ -352,7 +352,7 @@ class rrze_Meta_Box {
         elseif (is_string($meta_box['pages'])) {
             $type = $meta_box['pages'];
         }
-        elseif (is_array($meta_box['pages']) && count($meta_box['pages'] === 1)) {
+        elseif (is_array($meta_box['pages']) && (count($meta_box['pages']) === 1)) {
             $type = is_string(end($meta_box['pages'])) ? end($meta_box['pages']) : false;
         }
         
