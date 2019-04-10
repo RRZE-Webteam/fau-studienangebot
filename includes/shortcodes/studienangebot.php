@@ -2,59 +2,59 @@
 new FAU_Studienangebot_Shortcode();
 
 class FAU_Studienangebot_Shortcode {
-    
+
     const prefix = '_';
-    
+
     private static $textdomain;
-    
+
     private static $permalink_structure;
-    
+
     private static $the_permalink;
-    
+
     private static $base_permalink;
-    
+
     private static $url_path;
-    
+
     private static $post_type;
-    
+
     private $taxonomies;
-    
+
     private $taxs;
-    
+
     private $mitnc;
     private $zulassungsfrei;
-    
+
     private $request_query;
-        
+
     public function __construct() {
         add_shortcode('studienangebot', array($this, 'shortcode'));
     }
-    
+
     public function shortcode($atts) {
 
         if (!class_exists('FAU_Studienangebot')) {
             return '<p class="notice-attention">Das Plugin FAU-Studienangebot wurde nicht aktiviert. Bitte aktivieren Sie dieses Plugin, wenn Sie das Studienangebot-Shortcode verwenden möchten.</p>';
         }
 
-	
+
         self::$textdomain = FAU_Studienangebot::textdomain;
-                
+
         $this->taxonomies = FAU_Studienangebot::$taxonomies;
-		
-	
-	
+
+
+
 	add_action('wp_footer', array( 'FAU_Studienangebot' , 'print_script'));
-	
+
         self::$permalink_structure = get_option('permalink_structure');
         self::$url_path = parse_url("//$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]", PHP_URL_PATH);
         self::$the_permalink = empty(self::$permalink_structure) ? get_permalink() : site_url(self::$url_path);
         self::$base_permalink = site_url(basename(get_permalink()));
-        
+
         self::$post_type = 'studienangebot';
-        
+
         $default = array();
         $atts = shortcode_atts($default, $atts);
-                
+
         $this->taxs = array();
         foreach($this->taxonomies as $taxonomy) {
             $get_tax = isset($_GET[self::prefix . $taxonomy]) ? (array) $_GET[self::prefix . $taxonomy] : array();
@@ -62,10 +62,10 @@ class FAU_Studienangebot_Shortcode {
                 $this->taxs[$taxonomy] = array_map('trim', $get_tax);
             }
         }
-        
+
         $this->mitnc = isset($_GET[self::prefix . 'mitnc']) ? 1 : 0;
         $this->zulassungsfrei = isset($_GET[self::prefix . 'zulassungsfrei']) ? 1 : 0;
-        
+
         $request_query = array();
         $auswahl = array();
         foreach($this->taxs as $key => $tax) {
@@ -82,16 +82,16 @@ class FAU_Studienangebot_Shortcode {
                 $auswahl[] = implode(' + ', $auswahl_value[$key]);
             }
         }
-        
+
         if($this->mitnc) {
             $request_query[] = self::prefix . 'mitnc=1';
         }
         if($this->zulassungsfrei) {
             $request_query[] = self::prefix . 'zulassungsfrei=1';
         }
-        
+
         $auswahl = !empty($auswahl) ? sprintf('<p class="sa-auswahl"><b>%1$s</b> %2$s</p>', __('Sie haben ausgewählt:', self::$textdomain), implode(' + ', $auswahl)) : '';
-                
+
         $prefix = '?';
         $suffix = !empty($request_query) ? '&' : '';
         $this->request_query = $prefix . implode('&', $request_query) . $suffix;
@@ -101,12 +101,12 @@ class FAU_Studienangebot_Shortcode {
 	<div  class="fau-studienangebot">
 	    <div class="row">
 		<?php $this->form(); ?>
-		<div class="col-xs-6 col-sm-9">
-		    <div id="studienangebot-result">
+		<div class="col-xs-12 col-sm-9">
+		    <div id="studienangebot-result" aria-live="polite">
 			<?php
 			if(get_query_var('studiengang')) {
 			    $this->studiengang();
-			} 
+			}
 
 			else {
 			    echo $auswahl;
@@ -125,7 +125,7 @@ class FAU_Studienangebot_Shortcode {
         <?php
         return ob_get_clean();
     }
-        
+
     private function studiengang() {
         $args = array(
             'name' => get_query_var('studiengang'),
@@ -141,19 +141,19 @@ class FAU_Studienangebot_Shortcode {
         }
 
         $back_link = sprintf('<a href="%1$s">%2$s</a>', self::$the_permalink . $this->request_query, __('Zurück zur Liste', self::$textdomain));
-        
+
         if (!empty($post)) {
-            printf('<h3>%1$s <span class="sa-back-link">%2$s</span></h3>', $post->post_title, $back_link);            
+            printf('<h3>%1$s <span class="sa-back-link">%2$s</span></h3>', $post->post_title, $back_link);
             echo FAU_Studienangebot::the_output($post->ID);
         }
-        
+
         else {
             echo '<p class="sa-notfound">' . __('Es konnte nichts gefunden werden.', self::$textdomain) . '</p>';
             echo '<p>' . $back_link . '</p>';
-        }        
-        
+        }
+
     }
-    
+
     private function search() {
         add_filter('posts_orderby', array($this, 'posts_orderby'), 10, 2);
 
@@ -174,7 +174,7 @@ class FAU_Studienangebot_Shortcode {
             }
 
         }
-        
+
         $terms = get_terms('sazvs');
          if (!empty($terms) && !is_wp_error($terms)) {
             foreach ($terms as $term) {
@@ -182,10 +182,10 @@ class FAU_Studienangebot_Shortcode {
                     $categories['sazvs'][] = $term->term_id;
                 } elseif($this->zulassungsfrei && strpos($term->slug, 'studienanfaenger') === 0 && strpos($term->slug, 'zulassungsfrei') !== FALSE) {
                     $categories['sazvs'][] = $term->term_id;
-                }                
+                }
             }
         }
-        
+
         if (!empty($categories)) {
 
             $tax_query['relation'] = 'AND';
@@ -251,22 +251,22 @@ class FAU_Studienangebot_Shortcode {
 
                     if ($term->taxonomy == 'abschluss') {
                         $abschluss[] = $term->name;
-                    } 
+                    }
 
                     elseif ($term->taxonomy == 'semester') {
                         $semester[] = $term->name;
-                    } 
+                    }
 
                     elseif ($term->taxonomy == 'studienort') {
                         $studienort[] = $term->name;
                     }
-                    
+
                     elseif ($term->taxonomy == 'sazvs') {
                         if(strpos($term->slug, 'studienanfaenger') === 0) {
                             $mitnc[] = $term->name;
                         }
                     }
-                    
+
                 }
 
                 $abschluss = isset($abschluss) ? implode(',<br>', $abschluss) : '';
@@ -291,9 +291,9 @@ class FAU_Studienangebot_Shortcode {
             echo '<p>' . __('Es konnte nichts gefunden werden.') . '</p>';
         }
 
-        wp_reset_postdata();        
+        wp_reset_postdata();
     }
-    
+
     private function form() {
         $abschlussgruppe = FAU_Studienangebot::get_abschlussgruppe();
 
@@ -316,11 +316,11 @@ class FAU_Studienangebot_Shortcode {
             if (isset($abschluesse[$key])) {
                 $abschluss[$key] = $abschluesse[$key];
             }
-        }        
+        }
         ?>
-        <div class="col-xs-6 col-sm-3">
+        <div class="col-xs-12 col-sm-3">
 
-            <form id="studienangebot" action="<?php the_permalink(); ?>" method="get">
+            <form id="studienangebot" action="<?php the_permalink(); ?>" method="get" role="search" aria-controls="studienangebot-result" data-filtertoggle="<?php _e('Filter ein/ausblenden', self::$textdomain); ?>">
                 <h3><?php _e('Studiengang', self::$textdomain); ?></h3>
                 <?php $terms = get_terms('studiengang', array('pad_counts' => true, 'hide_empty' => 1)); ?>
                 <p>
@@ -350,7 +350,7 @@ class FAU_Studienangebot_Shortcode {
                         <label for="fakultaet-<?php echo $term->term_id; ?>"><?php echo $term->name; ?></label>
                     </p>
                 <?php endforeach; ?>
-                    
+
                 <h3><?php _e('Abschluss', self::$textdomain); ?></h3>
 
                 <?php foreach ($abschluss as $key => $terms): ?>
@@ -390,7 +390,7 @@ class FAU_Studienangebot_Shortcode {
                 <p>
                     <input type="checkbox" name="<?php echo self::prefix; ?>zulassungsfrei" value="1" id="mitnc" <?php checked($this->zulassungsfrei); ?>>
                     <label for="mitnc"><?php _e('zulassungsfrei', self::$textdomain); ?></label>
-                </p>                
+                </p>
                 <h3><?php _e('Weitere Eigenschaften', self::$textdomain); ?></h3>
                 <?php $terms = get_terms('saattribut', array('pad_counts' => true, 'hide_empty' => 1)); ?>
                 <?php foreach ($terms as $term): ?>
@@ -407,7 +407,7 @@ class FAU_Studienangebot_Shortcode {
         </div>
         <?php
     }
-    
+
     public function posts_orderby($orderby, $wp_query) {
         global $wpdb;
 
@@ -427,5 +427,5 @@ class FAU_Studienangebot_Shortcode {
 
         return $orderby;
     }
-    
+
 }

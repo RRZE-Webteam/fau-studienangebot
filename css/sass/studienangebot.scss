@@ -1,63 +1,64 @@
 /*
 SASS Datei zur spezifischen gestaltung der Ausgaben des Studienangebot-Plugins
 */
-/* 
+/*
     Created on : 05.08.2016, 16:20:15
     Author     : Wolfgang Wiese
 */
 
 
 @import "mixins";
- 
+
 
 #studienangebot {
 	border: none;
 	margin: 0;
 	padding: 0;
-	
+
 	select {
 		max-width: 220px;
+    width: 100%;
 	}
-	
+
 	input[type="checkbox"] {
 		margin-top: -4px;
 	}
-	
+
 	label {
 		font-size: 12px;
 		line-height: 15px;
 		padding-left: 3px;
-		float: none; 
+		float: none;
 		display: inline;
 	}
-	
+
 	p {
 		line-height: 15px;
 		margin-bottom: 0;
 		padding-bottom: 5px;
 		@include hyphens(none);
 	}
-	
+
 	h4 {
 		padding: 6px 0;
 	}
-	
+
 	.submit-button {
 		margin-top: 20px;
 	}
-	
+
 	th {
 	    width: 200px;
 	    vertical-align: top;
 	}
 
-        br { 
+        br {
                     display: none;
         }
-	
-	
-	
-	
+
+
+
+
 }
 
 
@@ -111,28 +112,28 @@ span.sa-back-link {
 	    display: inline-block;
 	    vertical-align: middle;
 	    line-height: 2.5em;
-	    
-	    
+
+
 		ul, li, p {
 	//		font-size: 14px;
 	//		line-height: 20px;
 		}
-		
+
 		ul, ol {
 			margin-left: 10px;
 		}
-		
+
 		li {
 			margin-left: 10px;
 			margin-bottom: 0;
 			padding-bottom: 0;
 		}
-		
+
 		p {
 			padding: 0;
 			margin: 0;
 		}
-	    
+
 	}
 
 	a {
@@ -141,15 +142,15 @@ span.sa-back-link {
 
     }
 
-   
+
 }
 /*
 dt {
 		margin: 5px 0;
 	}
-	
+
 	dd {
 		margin: 0 0 10px 25px;
 	}
-    
+
 	*/
