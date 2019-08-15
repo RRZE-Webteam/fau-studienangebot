@@ -2,7 +2,7 @@
 /*
  Plugin Name: FAU-Studienangebot
  Description: Studienangebotsverwaltung.
- Version: 2.3.11
+ Version: 2.3.12
  Author: RRZE-Webteam
  Author URI: https://blogs.fau.de/webworking/
  License: GNU General Public License v2
@@ -15,12 +15,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -33,14 +33,14 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation')
 
 class FAU_Studienangebot {
 
-    const version = '2.3.10';
+    const version = '2.3.12';
     const option_name = '_fau_studienangebot';
     const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
     const capability_type = 'studienangebot';
     const author_role = 'studienangebot_author';
     const editor_role = 'studienangebot_editor';
-    
+
     public static $taxonomies = array(
         'studiengang',
         'semester',
@@ -63,7 +63,7 @@ class FAU_Studienangebot {
         'FAU-RWFak',
         'FAU-Techfak'
     );
-    
+
     protected static $instance = null;
 
     const textdomain = 'studienangebot';
@@ -79,7 +79,7 @@ class FAU_Studienangebot {
     }
 
     private function __construct() {
-        
+
         define('SA_TEXTDOMAIN', self::textdomain);
 
         // Sprachdateien werden eingebunden.
@@ -87,10 +87,10 @@ class FAU_Studienangebot {
 
         // Aktualisierung des Plugins (ggf).
         self::update_version();
-        
+
         // register post type
         add_action('init', array(__CLASS__, 'register_post_type_studienangebot'));
-        
+
         // register taxonomies
         add_action('init', array($this, 'register_taxonomy_studiengang'));
         add_action('init', array($this, 'register_taxonomy_abschluss'));
@@ -106,41 +106,41 @@ class FAU_Studienangebot {
         // register the options
         //add_action('admin_init', array($this, 'settings_init'));
         //add_action('admin_init', array($this, 'settings_save'), 100);
-        
+
         // add settings submenu page
         //add_action('admin_menu', array($this, 'settings_submenu_page'));
-        
+
         // rename "featured image"
         add_action('admin_head-post-new.php', array($this, 'change_thumbnail_html'));
         add_action('admin_head-post.php', array($this, 'change_thumbnail_html'));
 
         // add sidebar
         add_action('widgets_init', array($this, 'register_sidebar'));
-        
+
 
 	add_action('init', array($this, 'register_script'));
 	// add_action('wp_footer', array($this, 'print_script'));
-	
-	
+
+
         // add term meta field
         add_action('abschluss_add_form_fields', array($this, 'abschluss_add_new_meta_field'), 10, 2);
         add_action('abschluss_edit_form_fields', array($this, 'abschluss_edit_meta_field'), 10, 2);
         add_action('edited_abschluss', array($this, 'save_abschluss_custom_meta'));
         add_action('create_abschluss', array($this, 'save_abschluss_custom_meta'));
         add_action('delete_abschluss', array($this, 'delete_abschluss_custom_meta'));
-        
+
         add_action('sazvs_add_form_fields', array($this, 'sazvs_add_new_meta_field'), 10, 2);
         add_action('sazvs_edit_form_fields', array($this, 'sazvs_edit_meta_field'), 10, 2);
         add_action('edited_sazvs', array($this, 'save_sazvs_custom_meta'));
         add_action('create_sazvs', array($this, 'save_sazvs_custom_meta'));
         add_action('delete_sazvs', array($this, 'delete_sazvs_custom_meta'));
-        
+
         add_action('saconstant_add_form_fields', array($this, 'saconstant_add_new_meta_field'), 10, 2);
         add_action('saconstant_edit_form_fields', array($this, 'saconstant_edit_meta_field'), 10, 2);
         add_action('edited_saconstant', array($this, 'save_saconstant_custom_meta'));
         add_action('create_saconstant', array($this, 'save_saconstant_custom_meta'));
         add_action('delete_saconstant', array($this, 'delete_saconstant_custom_meta'));
-        
+
         // custom term columns
         add_filter('manage_edit-studienangebot_columns', array($this, 'term_columns'));
         add_filter('manage_edit-abschluss_columns', array($this, 'term_columns'));
@@ -152,33 +152,33 @@ class FAU_Studienangebot {
         add_filter('manage_edit-semester_columns', array($this, 'term_columns'));
         add_filter('manage_edit-studiengang_columns', array($this, 'term_columns'));
         add_filter('manage_edit-studienort_columns', array($this, 'term_columns'));
-                     
+
         add_filter('manage_abschluss_custom_column', array($this, 'abschluss_custom_column'), 15, 3);
         add_filter('manage_edit-abschluss_columns', array($this, 'abschluss_columns'));
         add_filter('manage_sazvs_custom_column', array($this, 'sazvs_custom_column'), 15, 3);
-        add_filter('manage_edit-sazvs_columns', array($this, 'sazvs_columns'));        
+        add_filter('manage_edit-sazvs_columns', array($this, 'sazvs_columns'));
         add_filter('manage_saconstant_custom_column', array($this, 'saconstant_custom_column'), 15, 3);
         add_filter('manage_edit-saconstant_columns', array($this, 'saconstant_columns'));
 
         // hide term fields
         add_action('admin_head', array($this, 'hide_term_fields'));
-        
+
         // add rewrite endpoint
         add_action('init', array(__CLASS__, 'add_rewrite_endpoint'));
         add_action('permalink_structure_changed', array(__CLASS__, 'add_rewrite_endpoint'));
-        
+
         add_filter('the_content', array($this, 'the_content'));
-                
+
         // initialize Meta Boxes
         add_action('add_meta_boxes', array($this, 'set_meta_boxes'));
         add_action('init', array($this, 'initialize_meta_boxes'), 999);
 
         // include Meta Boxes
         include_once(plugin_dir_path(__FILE__) . 'includes/metaboxes.php');
-        
+
         // include Shortcodes
         include_once(plugin_dir_path(__FILE__) . 'includes/shortcodes/studienangebot.php');
-        include_once(plugin_dir_path(__FILE__) . 'includes/shortcodes/studiengaenge.php'); 
+        include_once(plugin_dir_path(__FILE__) . 'includes/shortcodes/studiengaenge.php');
     }
 
     public static function sync_roles() {
@@ -191,16 +191,16 @@ class FAU_Studienangebot {
         }
 
         $author_role = get_role('author');
-                
+
         $capabilities = array_merge($author_role->capabilities, $options->author_caps);
-        
+
         add_role(self::author_role, __('Studienangebotautor', self::textdomain), $capabilities);
     }
-    
+
     public static function add_rewrite_endpoint() {
         add_rewrite_endpoint('studiengang', EP_ROOT | EP_PAGES);
     }
-    
+
     /*
      * Überprüft die minimal erforderliche PHP- u. WP-Version.
      * @return void
@@ -222,21 +222,21 @@ class FAU_Studienangebot {
             wp_die($error);
         }
     }
-    
+
     /*
      * Aktualisierung des Plugins
      * @return void
      */
     private static function update_version() {
         $version = get_option(self::version_option_name, '0');
-        
+
         if (version_compare($version, self::version, '<')) {
             // Wird durchgeführt wenn das Plugin aktualisiert muss.
         }
-        
+
         update_option(self::version_option_name, self::version);
     }
-    
+
     private static function default_options() {
         $options = array(
             'sa_page' => -1,
@@ -253,7 +253,7 @@ class FAU_Studienangebot {
                 "delete_published_" . self::capability_type . "s" => true,
                 "delete_others_" . self::capability_type . "s" => true,
                 "edit_private_" . self::capability_type . "s" => true,
-                "edit_published_" . self::capability_type . "s" => true,                
+                "edit_published_" . self::capability_type . "s" => true,
             ),
         );
 
@@ -267,24 +267,24 @@ class FAU_Studienangebot {
         $options = array_intersect_key($options, $defaults);
         return $options;
     }
-    
+
     // Einbindung der Sprachdateien.
     private static function load_textdomain() {
         load_plugin_textdomain(self::textdomain, false, sprintf('%s/languages/', dirname(plugin_basename(__FILE__))));
     }
-    
+
     public static function activation() {
         // Sprachdateien werden eingebunden.
         self::load_textdomain();
-        
+
         // Überprüft die minimal erforderliche PHP- u. WP-Version.
         self::system_requirements();
-        
+
         // Aktualisierung des Plugins (ggf).
         self::update_version();
-        
+
         self::sync_roles();
-                    
+
         self::add_rewrite_endpoint();
         self::register_post_type_studienangebot();
         flush_rewrite_rules();
@@ -292,22 +292,22 @@ class FAU_Studienangebot {
 
     public static function deactivation() {
         $administrator_role = get_role('administrator');
-        
+
         $options = (object) self::get_options();
         foreach($options->author_caps as $cap) {
             $administrator_role->remove_cap($cap);
         }
-                
+
         remove_role(self::author_role);
-        
+
         delete_option(self::option_name);
-        
+
         flush_rewrite_rules();
     }
-    
+
     public static function register_post_type_studienangebot() {
         $supports = array('title', 'author', 'thumbnail', 'revisions');
-        
+
         $args = array(
             'labels' => array(
                 'name' => __('Studienangebot', self::textdomain),
@@ -345,7 +345,7 @@ class FAU_Studienangebot {
                 'delete_published_posts' => "delete_published_" . self::capability_type . "s",
                 'delete_others_posts' => "delete_others_" . self::capability_type . "s",
                 'edit_private_posts' => "edit_private_" . self::capability_type . "s",
-                'edit_published_posts' => "edit_published_" . self::capability_type . "s",                
+                'edit_published_posts' => "edit_published_" . self::capability_type . "s",
             ),
             'map_meta_cap' => true,
             'supports' => $supports,
@@ -630,7 +630,7 @@ class FAU_Studienangebot {
             ),
         ));
     }
-    
+
     public function register_taxonomy_saconstant() {
         register_taxonomy('saconstant', array(self::post_type), array(
             'label' => __('Konstante', self::textdomain),
@@ -664,7 +664,7 @@ class FAU_Studienangebot {
             ),
         ));
     }
-    
+
     public function register_taxonomy_satag() {
         register_taxonomy('satag', array(self::post_type), array(
             'label' => __('Schlagworte', self::textdomain),
@@ -697,17 +697,17 @@ class FAU_Studienangebot {
                 'manage_terms' => "edit_" . self::capability_type . "s",
                 'edit_terms' => "edit_" . self::capability_type . "s",
                 'delete_terms' => "edit_others_" . self::capability_type . "s",
-                'assign_terms' => "edit_" . self::capability_type . "s"            
+                'assign_terms' => "edit_" . self::capability_type . "s"
             ),
         ));
     }
-    
+
     public function initialize_meta_boxes() {
         if ( !class_exists( 'rrze_Meta_Box' ) ) {
             include_once(plugin_dir_path(__FILE__) . 'includes/metaboxes/rrze_meta_box.php');
         }
-    }        
-    
+    }
+
     public function set_meta_boxes() {
         global $wp_meta_boxes;
 
@@ -715,7 +715,7 @@ class FAU_Studienangebot {
         if (self::post_type != $screen->post_type) {
             return;
         }
-        
+
         unset($wp_meta_boxes[self::post_type]['normal']['core']['authordiv']);
 
         remove_meta_box('postimagediv', self::post_type, 'side');
@@ -736,21 +736,21 @@ class FAU_Studienangebot {
         unset($wp_meta_boxes[self::post_type]['side']['core']['saattributdiv']);
 
         unset($wp_meta_boxes[self::post_type]['side']['core']['sazvsdiv']);
-        
+
         unset($wp_meta_boxes[self::post_type]['side']['core']['saconstantdiv']);
     }
 
     public function settings_submenu_page() {
         add_submenu_page('edit.php?post_type=' . self::post_type, __('Einstellungen', self::textdomain), __('Einstellungen', self::textdomain), 'manage_options', 'settings', array($this, 'settings_page'));
     }
-    
+
     public function settings_save() {
         $options = self::get_options();
-        
+
         if (!isset($_POST['action'], $_POST['_wpnonce'], $_POST['option_page'], $_POST['_wp_http_referer'], $_POST['submit']) || !is_admin()) {
             return false;
         }
-        
+
         if ($_POST['action'] != 'update' || $_POST['option_page'] != 'settings') {
             return false;
         }
@@ -764,21 +764,21 @@ class FAU_Studienangebot {
 
         $referer = add_query_arg('update', 'settings', remove_query_arg(array('message'), wp_get_referer()));
         wp_redirect($referer);
-        exit;        
+        exit;
     }
-    
+
     public function settings_init() {
         add_settings_section(self::option_name . '_default_section', false, '__return_false', 'settings');
-        add_settings_field('sa_page', __('Studienangebotseite', self::textdomain), array($this, 'settings_sapage'), 'settings', self::option_name . '_default_section');        
+        add_settings_field('sa_page', __('Studienangebotseite', self::textdomain), array($this, 'settings_sapage'), 'settings', self::option_name . '_default_section');
     }
-    
+
     public function settings_page() {
         if (isset($_GET['update'])) {
             $messages = array();
             if ('settings' == $_GET['update']) {
                 $messages[] = __('Einstellungen gespeichert.', self::textdomain);
             }
-        }        
+        }
         ?>
         <div class="wrap">
             <h2><?php _e('Einstellungen', self::textdomain); ?></h2>
@@ -799,18 +799,18 @@ class FAU_Studienangebot {
         </div>
         <?php
     }
-    
+
     public function settings_sapage() {
         $options = (object) self::get_options();
-        
+
         wp_dropdown_pages(array(
             'name' => 'sa_page',
             'selected' => $options->sa_page,
             'show_option_none' => __('— Auswählen —', self::textdomain),
             'option_none_value' => -1
-        ));      
+        ));
     }
-    
+
     public function change_thumbnail_html($content) {
         if (self::post_type == $GLOBALS['post_type'])
             add_filter('admin_post_thumbnail_html', array($this, 'replace_content'));
@@ -822,12 +822,12 @@ class FAU_Studienangebot {
 
     public function hide_term_fields() {
         global $pagenow, $post_type;
-        
+
         if(isset($pagenow) && $pagenow == 'edit-tags.php' && isset($post_type) && $post_type == 'studienangebot') {
             echo "<style type=\"text/css\">div.form-required+div.form-field+div.form-field, tr.form-required+tr.form-field+tr.form-field { display: none; }</style>";
         }
     }
-    
+
     public function abschluss_add_new_meta_field() {
         ?>
         <div class="form-field">
@@ -857,7 +857,7 @@ class FAU_Studienangebot {
                     <?php foreach ($abschlussgruppe as $key => $label): ?>
                         <option value="<?php echo $key; ?>" <?php selected($term_meta['abschlussgruppe'], $key); ?>><?php echo $label; ?></option>
                     <?php endforeach; ?>
-                </select>                
+                </select>
             </td>
         </tr>
         <?php
@@ -895,7 +895,7 @@ class FAU_Studienangebot {
             <label for="term-linktext"><?php _e('Linktext', self::textdomain); ?></label>
             <input name="term_meta[linktext]" id="term-linktext" type="text" value="" size="40" aria-required="true" />
             <p>&nbsp;</p>
-        </div>        
+        </div>
         <div class="form-field">
             <label for="term-linkurl"><?php _e('Linkurl', self::textdomain); ?></label>
             <input name="term_meta[linkurl]" id="term-linkurl" type="text" value="" size="40" aria-required="true" />
@@ -915,7 +915,7 @@ class FAU_Studienangebot {
             <td>
                 <input name="term_meta[linktext]" id="term-linktext" type="text" value="<?php echo $linktext;?>" size="40" aria-required="true" />
              </td>
-        </tr>        
+        </tr>
         <tr class="form-field">
             <th scope="row" valign="top"><label for="term-linkurl"><?php _e('Linkurl', self::textdomain); ?></label></th>
             <td>
@@ -950,14 +950,14 @@ class FAU_Studienangebot {
             delete_option("sazvs_category_$t_id", $term_meta);
         }
     }
-    
+
     public function saconstant_add_new_meta_field() {
         ?>
         <div class="form-field">
             <label for="term-linktext"><?php _e('Linktext', self::textdomain); ?></label>
             <input name="term_meta[linktext]" id="term-linktext" type="text" value="" size="40" aria-required="true" />
             <p>&nbsp;</p>
-        </div>        
+        </div>
         <div class="form-field">
             <label for="term-linkurl"><?php _e('Linkurl', self::textdomain); ?></label>
             <input name="term_meta[linkurl]" id="term-linkurl" type="text" value="" size="40" aria-required="true" />
@@ -977,7 +977,7 @@ class FAU_Studienangebot {
             <td>
                 <input name="term_meta[linktext]" id="term-linktext" type="text" value="<?php echo $linktext;?>" size="40" aria-required="true" />
              </td>
-        </tr>        
+        </tr>
         <tr class="form-field">
             <th scope="row" valign="top"><label for="term-linkurl"><?php _e('Linkurl', self::textdomain); ?></label></th>
             <td>
@@ -1012,12 +1012,12 @@ class FAU_Studienangebot {
             delete_option("saconstant_category_$t_id", $term_meta);
         }
     }
-    
+
     public function term_columns($columns) {
         unset($columns['description']);
         return $columns;
     }
-    
+
     public function abschluss_columns($columns) {
         $new_columns = $columns;
         array_splice($new_columns, 2);
@@ -1041,7 +1041,7 @@ class FAU_Studienangebot {
             'master' => __('Masterstudiengänge', self::textdomain),
             'lehramt' => __('Lehramt und Staatsexamen', self::textdomain),
         );
-        
+
         return $abschlussgruppe;
     }
 
@@ -1063,7 +1063,7 @@ class FAU_Studienangebot {
         }
         return '';
     }
-    
+
     public function saconstant_columns($columns) {
         unset($columns['posts']);
         $new_columns = $columns;
@@ -1083,7 +1083,7 @@ class FAU_Studienangebot {
         }
         return '';
     }
-    
+
     public function register_sidebar() {
         register_sidebar( array(
             'name' => __('Studiengang-Sidebar', self::textdomain),
@@ -1093,24 +1093,24 @@ class FAU_Studienangebot {
             'after_widget'  => '</div>',
             'before_title' => '<h2 class="small">',
             'after_title' => '</h2>',
-        ));        
+        ));
     }
-    
-   
+
+
 
     public static function register_script() {
-        wp_register_script('fa-sa-js', plugins_url('/', __FILE__) . 'js/studienangebot.min.js',  array('jquery'),  self::version, true);		
-        wp_register_style( 'fa-sa-style', plugins_url( '/css/studienangebot.css', __FILE__ ) );	
+        wp_register_script('fa-sa-js', plugins_url('/', __FILE__) . 'js/studienangebot.min.js',  array('jquery'),  self::version, true);
+        wp_register_style( 'fa-sa-style', plugins_url( '/css/studienangebot.css', __FILE__ ) );
     }
     public static function print_script() {
 	wp_enqueue_script('fa-sa-js');
 	wp_enqueue_style('fa-sa-style');
     }
-    
+
     private static function get_link_html($post_id, $taxonomy, $data, $ul = true) {
         $output = '-';
         $items = array();
-        
+
         $terms = wp_get_object_terms($post_id, $taxonomy);
         if(empty($terms) || is_wp_error($terms)) {
             return $output;
@@ -1119,7 +1119,7 @@ class FAU_Studienangebot {
         if(!is_array($data)) {
             $data = array($data);
         }
-        
+
         foreach($terms as $term) {
             foreach($data as $val) {
                 $item = self::get_link_term($term->term_id, $taxonomy, $val);
@@ -1129,7 +1129,7 @@ class FAU_Studienangebot {
                 $items[] = $item;
             }
         }
-        
+
         if($ul && !empty($items)) {
             if(count($items) > 1) {
                 $output = '<ul><li>' . implode('</li><li>', $items) . '</li></ul>';
@@ -1138,16 +1138,16 @@ class FAU_Studienangebot {
                 $output = implode(', ', $items);
             }
         }
-        
+
         return $output;
     }
-    
+
     private static function get_link_term($term_id, $taxonomy, $slug) {
         $item = '';
         $term = get_term_by('slug', $slug, $taxonomy);
         if($term && ($term->term_id == $term_id)) {
             $t_id = $term->term_id;
-            $meta = get_option(sprintf('%1$s_category_%2$s', $taxonomy, $t_id));                       
+            $meta = get_option(sprintf('%1$s_category_%2$s', $taxonomy, $t_id));
             if($meta && !empty($meta['linkurl'])) {
                 $item = sprintf('<a href="%2$s">%1$s</a>', $meta['linktext'], $meta['linkurl']);
             } elseif($meta) {
@@ -1156,10 +1156,10 @@ class FAU_Studienangebot {
         }
         return $item;
     }
-    
+
     private static function get_metadata_html($post_id, $data, $ul = true) {
         $output = '-';
-        $items = array();        
+        $items = array();
         if(!is_array($data)) {
             $data = array($data);
         }
@@ -1169,7 +1169,7 @@ class FAU_Studienangebot {
                 continue;
             }
             $items[] = $item;
-        }        
+        }
         if(!empty($items)) {
             if($ul && count($items) > 1) {
                 $output = '<ul><li>' . implode('</li><li>', $items) . '</li></ul>';
@@ -1177,33 +1177,33 @@ class FAU_Studienangebot {
                 $output = implode(', ', $items);
             }
         }
-        
+
         return $output;
     }
-    
+
     public function the_content($content) {
-        
+
         if (is_singular(self::post_type)) {
-            
+
             $post = get_post();
 
             if (!empty($post)) {
                 $content = self::the_output($post->ID);
-            } 
-            
+            }
+
         }
         return $content;
-        
+
     }
-    
+
     public static function the_output($post_id) {
-        
+
         $terms = wp_get_object_terms($post_id, self::$taxonomies);
 
         if (empty($terms) || is_wp_error($terms)) {
             return '<p class="notice-attention">' . __('Es konnte nichts gefunden werden.', self::$textdomain) . '</p>';
         }
-        
+
 
         $faechergruppe = array();
         $fakultaet = array();
@@ -1212,7 +1212,7 @@ class FAU_Studienangebot {
         $studienort = array();
 
         foreach ($terms as $term) {
-            ${$term->taxonomy}[] = $term->name;               
+            ${$term->taxonomy}[] = $term->name;
         }
 
         $faechergruppe = isset($faechergruppe) ? implode(', ', $faechergruppe) : '';
@@ -1264,21 +1264,21 @@ class FAU_Studienangebot {
         $w_studienberatung = self::get_metadata_html($post_id, 'sa_ssc_info');
 
         $termine = self::get_link_html($post_id, 'saconstant', array('hinweisblatt-zur-einschreibung', 'semester-und-terminplan'));
-        $gebuehren = self::get_link_html($post_id, 'saconstant', 'semesterbeitraege');        
+        $gebuehren = self::get_link_html($post_id, 'saconstant', 'semesterbeitraege');
         $studentenvertretung = self::get_link_html($post_id, 'saconstant', 'studentenvertretungfachschaft');
         $beruflich = self::get_link_html($post_id, 'saconstant', 'berufliche-moeglichkeiten');
-        
+
         ob_start();
-        
+
         $current_theme = wp_get_theme();
         if (in_array($current_theme->stylesheet, self::$fauthemes)) {
             $template = 'content-fau-page.php';
         } else {
-            $template = sprintf('content-%s.php', self::post_type);                 
+            $template = sprintf('content-%s.php', self::post_type);
         }
         include_once(plugin_dir_path(__FILE__) . 'includes/templates/' . $template);
-        
+
         return ob_get_clean();
     }
-    
+
 }

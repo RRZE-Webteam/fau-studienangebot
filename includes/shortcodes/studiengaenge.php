@@ -3,7 +3,7 @@
 /**
  * Nutzung des Studiengaenge-Shortcode:
  * [studiengaenge name-der-taxonomy="titelform1,titleform2,..."]
- * 
+ *
  * Beispiele:
  * [studiengaenge]
  * [studiengaenge saattribut="weiterbildungsstudiengang"]
@@ -23,31 +23,31 @@
 new FAU_Studiengaenge_Shortcode();
 
 class FAU_Studiengaenge_Shortcode {
-    
+
     const prefix = '_';
-    
+
     private static $textdomain;
-    
+
     private static $permalink_structure;
-    
+
     private static $the_permalink;
-    
+
     private static $base_permalink;
-    
+
     private static $url_path;
-    
+
     private static $post_type;
-    
+
     private $taxonomies;
-    
+
     private $taxs;
-    
+
     private $request_query;
-    
+
     public function __construct() {
         add_shortcode('studiengaenge', array($this, 'shortcode'));
     }
-    
+
     public function shortcode($atts) {
 
         if (!class_exists('FAU_Studienangebot')) {
@@ -56,24 +56,24 @@ class FAU_Studiengaenge_Shortcode {
 
 
         self::$textdomain = FAU_Studienangebot::textdomain;
-                
+
         $this->taxonomies = FAU_Studienangebot::$taxonomies;
 
-	add_action('wp_footer', array(FAU_Studienangebot, 'print_script'));
+	add_action('wp_footer', array('FAU_Studienangebot', 'print_script'));
 
-	
+
         self::$permalink_structure = get_option('permalink_structure');
         self::$url_path = parse_url("//$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]", PHP_URL_PATH);
         self::$the_permalink = empty(self::$permalink_structure) ? get_permalink() : site_url(self::$url_path);
         self::$base_permalink = site_url(basename(get_permalink()));
-        
+
         self::$post_type = 'studienangebot';
 
         $default = array();
         foreach($this->taxonomies as $taxonomy) {
             $default[$taxonomy] = '';
         }
-        
+
         $atts = shortcode_atts($default, $atts);
 
         $this->taxs = array();
@@ -92,7 +92,7 @@ class FAU_Studiengaenge_Shortcode {
         $prefix = '?';
         $suffix = !empty($request_query) ? '&' : '';
         $this->request_query = $prefix . implode('&', $request_query) . $suffix;
-        
+
         ob_start();
         ?>
         <div class="row">
@@ -101,11 +101,11 @@ class FAU_Studiengaenge_Shortcode {
                     <?php
                     if(get_query_var('studiengang')) {
                         $this->studiengang();
-                    } 
+                    }
 
-                    else {                    
+                    else {
                         $this->search();
-                    }                
+                    }
                     ?>
                 </div>
             </div>
@@ -119,7 +119,7 @@ class FAU_Studiengaenge_Shortcode {
         <?php
         return ob_get_clean();
     }
-    
+
     private function studiengang() {
         $args = array(
             'name' => get_query_var('studiengang'),
@@ -138,13 +138,13 @@ class FAU_Studiengaenge_Shortcode {
             printf('<h3>%s</h3>', $post->post_title);
             echo FAU_Studienangebot::the_output($post->ID);
         }
-        
+
         else {
             echo '<p class="notice-attention">' . __('Es konnte nichts gefunden werden.', self::$textdomain) . '</p>';
-        }        
-        
+        }
+
     }
-    
+
     private function search() {
         add_filter('posts_orderby', array($this, 'posts_orderby'), 10, 2);
 
@@ -180,7 +180,7 @@ class FAU_Studiengaenge_Shortcode {
             }
 
         }
-        
+
         $args = array(
             'nopaging' => true,
             'post_type' => self::$post_type,
@@ -230,22 +230,22 @@ class FAU_Studiengaenge_Shortcode {
 
                     if ($term->taxonomy == 'abschluss') {
                         $abschluss[] = $term->name;
-                    } 
+                    }
 
                     elseif ($term->taxonomy == 'semester') {
                         $semester[] = $term->name;
-                    } 
+                    }
 
                     elseif ($term->taxonomy == 'studienort') {
                         $studienort[] = $term->name;
                     }
-                    
+
                     elseif ($term->taxonomy == 'sazvs') {
                         if(strpos(strrev($term->slug), 'cn-') === 0) {
                             $mitnc[] = $term->name;
                         }
                     }
-                    
+
                 }
 
                 $abschluss = isset($abschluss) ? implode(', ', $abschluss) : '';
@@ -270,9 +270,9 @@ class FAU_Studiengaenge_Shortcode {
             echo '<p>' . __('Es konnte nichts gefunden werden.') . '</p>';
         }
 
-        wp_reset_postdata();        
+        wp_reset_postdata();
     }
-    
+
     public function posts_orderby($orderby, $wp_query) {
         global $wpdb;
 
@@ -292,5 +292,5 @@ class FAU_Studiengaenge_Shortcode {
 
         return $orderby;
     }
-    
+
 }
