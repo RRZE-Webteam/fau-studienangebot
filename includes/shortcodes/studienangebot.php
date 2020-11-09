@@ -388,8 +388,8 @@ class FAU_Studienangebot_Shortcode {
                     <label for="mitnc"><?php _e('mit NC', self::$textdomain); ?></label>
                 </p>
                 <p>
-                    <input type="checkbox" name="<?php echo self::prefix; ?>zulassungsfrei" value="1" id="mitnc" <?php checked($this->zulassungsfrei); ?>>
-                    <label for="mitnc"><?php _e('zulassungsfrei', self::$textdomain); ?></label>
+                    <input type="checkbox" name="<?php echo self::prefix; ?>zulassungsfrei" value="1" id="zulassungsfrei" <?php checked($this->zulassungsfrei); ?>>
+                    <label for="zulassungsfrei"><?php _e('zulassungsfrei', self::$textdomain); ?></label>
                 </p>
                 <h3><?php _e('Weitere Eigenschaften', self::$textdomain); ?></h3>
                 <?php $terms = get_terms('saattribut', array('pad_counts' => true, 'hide_empty' => 1)); ?>
