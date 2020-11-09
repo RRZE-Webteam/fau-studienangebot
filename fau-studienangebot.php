@@ -1096,8 +1096,8 @@ class FAU_Studienangebot {
 
 
     public static function register_script() {
-        wp_register_script('fa-sa-js', plugins_url('/', __FILE__) . 'js/studienangebot.min.js',  array('jquery'),  self::version, true);
-        wp_register_style( 'fa-sa-style', plugins_url( '/css/studienangebot.css', __FILE__ ) );
+        wp_register_script('fa-sa-js', plugins_url('/js/studienangebot.min.js', __FILE__),  array('jquery'),  self::version, true);
+        wp_register_style('fa-sa-style', plugins_url('/css/studienangebot.css', __FILE__ ),  array(),  self::version);
     }
     public static function print_script() {
 	wp_enqueue_script('fa-sa-js');
