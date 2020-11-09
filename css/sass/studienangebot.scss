@@ -11,57 +11,84 @@ SASS Datei zur spezifischen gestaltung der Ausgaben des Studienangebot-Plugins
 
 
 #studienangebot {
-	border: none;
-	margin: 0;
-	padding: 0;
+    border: none;
+    margin: 0;
+    padding: 0;
 
-	select {
-		max-width: 220px;
-    width: 100%;
-	}
+    select {
+        max-width: 220px;
+        width: 100%;
+    }
 
-	input[type="checkbox"] {
-		margin-top: -4px;
-	}
+    input[type="checkbox"] {
+        margin-top: -4px;
+    }
 
-	label {
-		font-size: 12px;
-		line-height: 15px;
-		padding-left: 3px;
-		float: none;
-		display: inline;
-	}
+    label {
+        font-size: 12px;
+        line-height: 15px;
+        padding-left: 3px;
+        float: none;
+        display: inline;
+    }
 
-	p {
-		line-height: 15px;
-		margin-bottom: 0;
-		padding-bottom: 5px;
-		@include hyphens(none);
-	}
+    p {
+        line-height: 15px;
+        margin-bottom: 0;
+        padding-bottom: 5px;
+        @include hyphens(none);
+    }
 
-	h4 {
-		padding: 6px 0;
-	}
+    h4 {
+        padding: 6px 0;
+    }
 
-	.submit-button {
-		margin-top: 20px;
-	}
+    .submit-button {
+        margin-top: 20px;
+    }
 
-	th {
-	    width: 200px;
-	    vertical-align: top;
-	}
+    th {
+        width: 200px;
+        vertical-align: top;
+    }
 
-        br {
-                    display: none;
-        }
-
-
-
-
+    br {
+        display: none;
+    }
 }
 
+.fau-studienangebot {
+    #loading {
+        display: none;
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 1000;
+    }
 
+    #loading-background {
+        background: #000;
+        opacity: 0.5;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 1010;
+    }
+
+    #loading-spinner {
+        background: transparent url('../images/ajax-loader.gif') no-repeat center center;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 1020;
+    }	
+}
 
 
 p.sa-auswahl,
@@ -71,15 +98,15 @@ p.sa-notfound {
 }
 
 span.sa-back-link {
-    font-style:normal;
-    font-size:0.75em;
-    float:right;
+    font-style: normal;
+    font-size: 0.75em;
+    float: right;
 }
 
 #studienangebot-result {
     .accordion-group dl {
-	padding: 0px;
-	margin: 0px;
+        padding: 0px;
+        margin: 0px;
     }
 }
 
@@ -87,70 +114,58 @@ span.sa-back-link {
 
 #studienangebot-result {
     dl {
-	overflow: hidden;
+        overflow: hidden;
 
-	dl:first-child {
-	   border: none;
-	}
-	dt {
-	    font-weight: bold;
-	    float: left;
-	    clear: left;
-	    min-width: 100px;
-	    width: 35%;
-	}
-	dd {
-	    float: left;
-	    min-width: 100px;
-	    margin-left: 0;
-	    width: 65%;
-	}
+        dl:first-child {
+            border: none;
+        }
 
-	dt, dd {
-	//    font-size: 14px;
-	    color: #444;
-	    display: inline-block;
-	    vertical-align: middle;
-	    line-height: 2.5em;
+        dt {
+            font-weight: bold;
+            float: left;
+            clear: left;
+            min-width: 100px;
+            width: 35%;
+        }
 
+        dd {
+            float: left;
+            min-width: 100px;
+            margin-left: 0;
+            width: 65%;
+        }
 
-		ul, li, p {
-	//		font-size: 14px;
-	//		line-height: 20px;
-		}
+        dt,
+        dd {
+            //    font-size: 14px;
+            color: #444;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 2.5em;
 
-		ul, ol {
-			margin-left: 10px;
-		}
+            ul,
+            ol {
+                margin-left: 10px;
+            }
 
-		li {
-			margin-left: 10px;
-			margin-bottom: 0;
-			padding-bottom: 0;
-		}
+            li {
+                margin-left: 10px;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
 
-		p {
-			padding: 0;
-			margin: 0;
-		}
+            p {
+                padding: 0;
+                margin: 0;
+            }
 
-	}
+        }
 
-	a {
-		text-decoration: underline;
-	}
+        a {
+            text-decoration: underline;
+        }
 
     }
 
 
 }
-/*
-dt {
-		margin: 5px 0;
-	}
-
-	dd {
-		margin: 0 0 10px 25px;
-	}
-
-	*/
