@@ -4,7 +4,7 @@
 Plugin Name:     FAU-Studienangebot
 Plugin URI:      https://github.com/RRZE-Webteam/fau-studienangebot
 Description:     Verwaltung des Studienangebots der FAU.
-Version:         2.4.0
+Version:         2.4.1
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
@@ -20,7 +20,7 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation')
 
 class FAU_Studienangebot {
 
-    const version = '2.4.0';
+    const version = '2.4.1';
     const option_name = '_fau_studienangebot';
     const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
@@ -1096,8 +1096,8 @@ class FAU_Studienangebot {
 
 
     public static function register_script() {
-        wp_register_script('fa-sa-js', plugins_url('/', __FILE__) . 'js/studienangebot.min.js',  array('jquery'),  self::version, true);
-        wp_register_style( 'fa-sa-style', plugins_url( '/css/studienangebot.css', __FILE__ ) );
+        wp_register_script('fa-sa-js', plugins_url('/js/studienangebot.min.js', __FILE__),  array('jquery'),  self::version, true);
+        wp_register_style('fa-sa-style', plugins_url('/css/studienangebot.css', __FILE__ ),  array(),  self::version);
     }
     public static function print_script() {
 	wp_enqueue_script('fa-sa-js');
