@@ -179,6 +179,16 @@ class FAU_Studienangebot {
         // include Shortcodes
         include_once(plugin_dir_path(__FILE__) . 'includes/shortcodes/studienangebot.php');
         include_once(plugin_dir_path(__FILE__) . 'includes/shortcodes/studiengaenge.php');
+
+        // remove quick edit
+        add_filter('post_row_actions', array(__CLASS__, 'remove_quick_edit'), 10, 2);
+    }
+
+    public static function remove_quick_edit($actions, $post) {
+        if ($post->post_type = 'studienangebot') {
+            unset($actions['inline hide-if-no-js']);
+        }
+        return $actions;
     }
 
     public static function sync_roles() {
@@ -1201,7 +1211,7 @@ class FAU_Studienangebot {
         $terms = wp_get_object_terms($post_id, self::$taxonomies);
 
         if (empty($terms) || is_wp_error($terms)) {
-            return '<p class="notice-attention">' . __('Es konnte nichts gefunden werden.', self::$textdomain) . '</p>';
+            return '<p class="notice-attention">' . __('Es konnte nichts gefunden werden.', self::textdomain) . '</p>';
         }
 
 
