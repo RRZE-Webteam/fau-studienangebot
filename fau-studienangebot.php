@@ -1,30 +1,17 @@
 <?php
+
 /*
- Plugin Name: FAU-Studienangebot
- Description: Studienangebotsverwaltung.
- Version: 2.3.12
- Author: RRZE-Webteam
- Author URI: https://blogs.fau.de/webworking/
- License: GNU General Public License v2
- License URI: http://www.gnu.org/licenses/gpl-2.0.html
- GitHub Plugin URI: https://github.com/RRZE-Webteam/fau-studienangebot
- License: GPLv2 or later
- */
-/*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
+Plugin Name:     FAU-Studienangebot
+Plugin URI:      https://github.com/RRZE-Webteam/fau-studienangebot
+Description:     Verwaltung des Studienangebots der FAU.
+Version:         2.4.0
+Author:          RRZE Webteam
+Author URI:      https://blogs.fau.de/webworking/
+License:         GNU General Public License v2
+License URI:     http://www.gnu.org/licenses/gpl-2.0.html
+Domain Path:     /languages
+Text Domain:     cms-workflow
+*/
 
 add_action('plugins_loaded', array('FAU_Studienangebot', 'instance'));
 
@@ -33,7 +20,7 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation')
 
 class FAU_Studienangebot {
 
-    const version = '2.3.12';
+    const version = '2.4.0';
     const option_name = '_fau_studienangebot';
     const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
@@ -67,8 +54,8 @@ class FAU_Studienangebot {
     protected static $instance = null;
 
     const textdomain = 'studienangebot';
-    const php_version = '5.5'; // Minimal erforderliche PHP-Version
-    const wp_version = '4.8'; // Minimal erforderliche WordPress-Version
+    const php_version = '7.3'; // Minimal erforderliche PHP-Version
+    const wp_version = '5.5'; // Minimal erforderliche WordPress-Version
 
     public static function instance() {
         if (is_null(self::$instance)) {
