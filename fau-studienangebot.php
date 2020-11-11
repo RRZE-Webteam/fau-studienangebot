@@ -172,7 +172,7 @@ class FAU_Studienangebot {
     }
 
     public static function remove_quick_edit($actions, $post) {
-        if ($post->post_type = 'studienangebot') {
+        if ($post->post_type == 'studienangebot') {
             unset($actions['inline hide-if-no-js']);
         }
         return $actions;
