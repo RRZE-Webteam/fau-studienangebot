@@ -9,7 +9,7 @@ $content_blick = '<dl id="auf-einen-blick">'
     . '<dt>' . __('Regelstudienzeit', self::textdomain) . '</dt><dd>' . $regelstudienzeit . '</dd>'
     . '<dt>' . __('Studienbeginn', self::textdomain) . '</dt><dd>' . $semester . '</dd>'
     . '<dt>' . __('Studienort', self::textdomain) . '</dt><dd>' . $studienort . '</dd>'
-    //. '<dt>' . __('Kurzinformationen zum Studiengang', self::textdomain) . '</dt><dd>' . $studiengang_info . '</dd>'
+    . '<dt>' . __('Kurzinformationen zum Studiengang', self::textdomain) . '</dt><dd>' . $studiengang_info . '</dd>'
     . '<dt>' . __('Studiengangsgebühren', self::textdomain) . '</dt><dd>' . $sa_gebuehren . '</dd>'
     . '<dt>' . __('Semesterbeitrag', self::textdomain) . '</dt><dd>' . $gebuehren . '</dd>'
     . '</dl>';
