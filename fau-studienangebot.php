@@ -4,7 +4,7 @@
 Plugin Name:     FAU-Studienangebot
 Plugin URI:      https://github.com/RRZE-Webteam/fau-studienangebot
 Description:     Verwaltung des Studienangebots der FAU.
-Version:         2.4.4
+Version:         2.5.1
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
@@ -20,7 +20,7 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation')
 
 class FAU_Studienangebot {
 
-    const version = '2.4.4';
+    const version = '2.5.1';
     const option_name = '_fau_studienangebot';
     const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
@@ -169,6 +169,10 @@ class FAU_Studienangebot {
 
         // remove quick edit
         add_filter('post_row_actions', array(__CLASS__, 'remove_quick_edit'), 10, 2);
+
+        // Export All Posts To CSV
+        add_action( 'manage_posts_extra_tablenav', array(__CLASS__, 'export_to_csv_button'), 20);
+        add_action( 'init', array(__CLASS__, 'export_to_csv') );
     }
 
     public static function remove_quick_edit($actions, $post) {
@@ -1278,4 +1282,200 @@ class FAU_Studienangebot {
         return ob_get_clean();
     }
 
+    public static function export_to_csv_button( $which ) {
+        global $typenow;
+      
+        if ( 'studienangebot' === $typenow && 'top' === $which ) {
+            ?>
+            <input type="submit" name="fau-studienangebot-export-to-csv" class="button button-primary" value="<?php _e('Export nach CSV', self::textdomain); ?>" />
+            <?php
+        }
+    }
+
+    public static function export_to_csv() {
+        if(isset($_GET['fau-studienangebot-export-to-csv'])) {
+            $args = [
+                'post_type' => 'studienangebot',
+                'post_status' => 'publish',
+                'posts_per_page' => -1,
+            ];
+      
+            $metas = [
+                'studiengang' => [
+                    'type' => 'taxonomy',
+                    'label' => 'Studiengang'
+                ],
+                'fakultaet' => [
+                    'type' => 'taxonomy',
+                    'label' => 'Fakultät'
+                ],
+                'abschluss' => [
+                    'type' => 'taxonomy',
+                    'label' => 'Abschluss'
+                ],  
+                'sa_regelstudienzeit' => [
+                    'type' => 'postmeta',
+                    'label' => 'Regelstudienzeit'
+                ],
+                'semester' => [
+                    'type' => 'taxonomy',
+                    'label' => 'Studienbeginn'
+                ],
+                'studienort' => [
+                    'type' => 'taxonomy',
+                    'label' => 'Studienort'
+                ],
+                'sa_studiengang_info' => [
+                    'type' => 'postmeta',
+                    'label' => 'Kurzinformationen zum Studiengang'
+                ], 
+                'faechergruppe' => [
+                    'type' => 'taxonomy',
+                    'label' => 'Fächergruppe'
+                ], 
+                'saattribut' => [
+                    'type' => 'taxonomy',
+                    'label' => 'Attribute'
+                ],
+                'sa_schwerpunkte' => [
+                    'type' => 'postmeta',
+                    'label' => 'Studieninhalte'
+                ],
+                'sa_besondere_hinweise' => [
+                    'type' => 'postmeta',
+                    'label' => 'Besondere Hinweise'
+                ],
+                'sa_kombination_info' => [
+                    'type' => 'postmeta',
+                    'label' => 'Kombinationsmöglichkeiten'
+                ],
+                'sazvs' => [
+                    'type' => 'taxonomy',
+                    'label' => 'Voraussetzungen'
+                ],
+                'sa_zvs_weiteres' => [
+                    'type' => 'postmeta',
+                    'label' => 'Details'
+                ],
+                'sa_sprachkenntnisse' => [
+                    'type' => 'postmeta',
+                    'label' => 'Sprachkenntnisse'
+                ],
+                'sa_de_kenntnisse_info' => [
+                    'type' => 'postmeta',
+                    'label' => 'Deutschkenntnisse für ausländische Studierende'
+                ],
+                'sa_einfuehrung_info' => [
+                    'type' => 'postmeta',
+                    'label' => 'Studienbeginn - Einführungsveranstaltung für Erstsemester'
+                ],
+                'sa_pruefungsamt_info' => [
+                    'type' => 'postmeta',
+                    'label' => 'Prüfungsamt/ Prüfungsbeauftragte'
+                ],
+                'sa_pruefungsordnung_info' => [
+                    'type' => 'postmeta',
+                    'label' => 'Studien- und Prüfungsordnung mit Studienplan'
+                ],
+                'sa_fach_info' => [
+                    'type' => 'postmeta',
+                    'label' => 'Link zum Studiengang'
+                ],  
+                'sa_sb_allgemein_info' => [
+                    'type' => 'postmeta',
+                    'label' => 'Studienberatung allgemein'
+                ],          
+                'sa_ssc_info' => [
+                    'type' => 'postmeta',
+                    'label' => 'Studien-Service-Center'
+                ],
+                'sa_englische_bezeichnung' => [
+                    'type' => 'postmeta',
+                    'label' => 'Englische Bezeichnung des Studiengangs'
+                ],
+                'sa_englische_url' => [
+                    'type' => 'postmeta',
+                    'label' => 'Link zur englischen Webseite des Faches'
+                ],
+                'sa_englisch_anzeige' => [
+                    'type' => 'postmeta',
+                    'label' => 'Anzeige des Studienganges im englischen Webauftritt'
+                ],
+                'sa_gebuehren' => [
+                    'type' => 'postmeta',
+                    'label' => 'Studiengangsgebühren'
+                ],
+                'sa_bewerbung' => [
+                    'type' => 'postmeta',
+                    'label' => 'Bewerbungsverfahren'
+                ],
+                'sa_studiengangskoordination' => [
+                    'type' => 'postmeta',
+                    'label' => 'Studiengangskoordination'
+                ],
+                'saconstant' => [
+                    'type' => 'taxonomy',
+                    'label' => 'Allgemein'
+                ],
+            ];         
+
+            $posts_ary = get_posts($args);
+            if (!$posts_ary) {
+                return;
+            }
+            
+            $columns[] = 'Titel';
+            foreach ($metas as $meta_key => $meta_value) {
+                $columns[] = $meta_value['label'];
+            }
+
+            $rows = [];
+            foreach ($posts_ary as $post) {
+                $row = [];
+                $row[] = wp_specialchars_decode($post->post_title);
+
+                foreach ($metas as $meta_key => $meta_value) {
+                    if ($meta_value['type'] == 'taxonomy') {
+                        $term_list = wp_get_post_terms($post->ID, $meta_key, ['fields' => 'all']);
+                        if (!is_wp_error($term_list) && !empty($term_list)) {
+                            $t = [];
+                            foreach ($term_list as $term) {
+                                $t[] = wp_specialchars_decode($term->name);
+                            }
+                            $row[] = implode(',', $t);                          
+                        } else {
+                            $row[] = '';
+                        }
+                    } elseif ($meta_value['type'] == 'postmeta') {
+                        $post_meta = get_post_meta($post->ID, $meta_key, true);
+                        if ($post_meta) {
+                            $string = strip_tags($post_meta, '<a>');
+                            $string = str_replace('&nbsp;', '', $string);
+                            $string = preg_replace('/\t+/', '', $string);
+                            $string = wp_specialchars_decode($string);
+                            $row[] = trim($string);
+                        } else {
+                            $row[] = '';
+                        }
+                    }
+                }
+                $rows[] = $row;               
+            }
+
+            header('Content-type: text/csv');
+            header('Content-Disposition: attachment; filename="fau-studienangebot.csv"');
+            header('Pragma: no-cache');
+            header('Expires: 0');
+    
+            $file = fopen('php://output', 'w');
+    
+            fputcsv($file, $columns, "\t");
+            
+            foreach ($rows as $row) {
+                fputcsv($file, $row, "\t");
+            }
+
+            exit();
+        }
+    }    
 }
