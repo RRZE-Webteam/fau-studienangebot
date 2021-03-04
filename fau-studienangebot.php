@@ -1463,7 +1463,7 @@ class FAU_Studienangebot {
             }
 
             header('Content-type: text/csv');
-            header('Content-Disposition: attachment; filename="wp-posts.csv"');
+            header('Content-Disposition: attachment; filename="fau-studienangebot.csv"');
             header('Pragma: no-cache');
             header('Expires: 0');
     
