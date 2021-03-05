@@ -11,6 +11,7 @@ echo '<dt>' . __('Studienort', self::textdomain) . '</dt><dd>' . $studienort . '
 echo '<dt>' . __('Kurzinformationen zum Studiengang', self::textdomain) . '</dt><dd>' . $studiengang_info . '</dd>';
 echo '<dt>' . __('Studiengangsgebühren', self::textdomain) . '</dt><dd>' . $sa_gebuehren . '</dd>';
 echo '<dt>' . __('Semesterbeitrag', self::textdomain) . '</dt><dd>' . $gebuehren . '</dd>';
+echo '<dt>' . __('Link zum Studiengang', self::textdomain) . '</dt><dd>' . $fach . '</dd>';
 echo '</dl>';
 if (!isset($attribut_terms[0]->slug) || $attribut_terms[0]->slug != 'weiterbildungsstudiengang') {
     echo '<a href="#"><h4>' . __('Aufbau und Struktur', self::textdomain) . '</h4></a>';
@@ -56,7 +57,7 @@ if (!isset($attribut_terms[0]->slug) || $attribut_terms[0]->slug != 'weiterbildu
     echo '<a href="#"><h4>' . __('Organisation', self::textdomain) . '</h4></a>';
     echo '<dl class="studiengang-list" id="organisation">';
     echo '<dt>' . __('Prüfungsangelegenheiten', self::textdomain) . '</dt><dd>' . $pruefung . '</dd>';
-    echo '<dt>' . __('Link zum Studiengang', self::textdomain) . '</dt><dd>' . $fach . '</dd>';
+    //echo '<dt>' . __('Link zum Studiengang', self::textdomain) . '</dt><dd>' . $fach . '</dd>';
     echo '<dt>' . __('Studiengangskoordination', self::textdomain) . '</dt><dd>' . $studiengangskoordination . '</dd>';
     echo '</dl>';
 }
