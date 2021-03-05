@@ -12,6 +12,7 @@ $content_blick = '<dl id="auf-einen-blick">'
     . '<dt>' . __('Kurzinformationen zum Studiengang', self::textdomain) . '</dt><dd>' . $studiengang_info . '</dd>'
     . '<dt>' . __('Studiengangsgebühren', self::textdomain) . '</dt><dd>' . $sa_gebuehren . '</dd>'
     . '<dt>' . __('Semesterbeitrag', self::textdomain) . '</dt><dd>' . $gebuehren . '</dd>'
+    . '<dt>' . __('Link zum Studiengang', self::textdomain) . '</dt><dd>' . $fach . '</dd>'    
     . '</dl>';
 $shortcode_data .= do_shortcode('[collapse title="' . __('Auf einen Blick', self::textdomain) . '" name="auf-einen-blick" load="open"]' . $content_blick . '[/collapse]');
 
@@ -62,7 +63,7 @@ if(empty($attribut_terms) || !in_array('weiterbildungsstudiengang', $attribut_te
 
     $content_orga = '<dl id="organisation">'
         . '<dt>' . __('Prüfungsangelegenheiten', self::textdomain) . '</dt><dd>' . $pruefung . '</dd>'
-        . '<dt>' . __('Link zum Studiengang', self::textdomain) . '</dt><dd>' . $fach . '</dd>'
+        //. '<dt>' . __('Link zum Studiengang', self::textdomain) . '</dt><dd>' . $fach . '</dd>'
         . '<dt>' . __('Studiengangskoordination', self::textdomain) . '</dt><dd>' . $studiengangskoordination . '</dd>'
         . '</dl>';
     $shortcode_data .= do_shortcode('[collapse title="' . __('Organisation', self::textdomain) . '" name="organisation"]' . $content_orga . '[/collapse]');
