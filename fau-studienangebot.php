@@ -1041,6 +1041,7 @@ class FAU_Studienangebot {
             'bachelor' => __('Bachelorstudiengänge', self::textdomain),
             'master' => __('Masterstudiengänge', self::textdomain),
             'lehramt' => __('Lehramt und Staatsexamen', self::textdomain),
+            'sonstige' => __('Sonstige Abschlüsse', self::textdomain),
         );
 
         return $abschlussgruppe;
