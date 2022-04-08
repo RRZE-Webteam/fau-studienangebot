@@ -98,7 +98,7 @@ class FAU_Studienangebot_Shortcode {
 
         ob_start();
         ?>
-	<div  class="fau-studienangebot">
+	<div  class="fau-studienangebot">  
 	    <div class="row">
 		<?php $this->form(); ?>
 		<div class="col-xs-12 col-sm-9">
@@ -140,7 +140,7 @@ class FAU_Studienangebot_Shortcode {
             $post = $posts[0];
         }
 
-        $back_link = sprintf('<a href="%1$s">%2$s</a>', self::$the_permalink . $this->request_query, __('Zurück zur Liste', self::$textdomain));
+        $back_link = sprintf('<a class="prevlink-ghostbutton" href="%1$s">%2$s</a>', self::$the_permalink . $this->request_query, __('Zurück zur Liste', self::$textdomain));
 
         if (!empty($post)) {
             printf('<h3>%1$s <span class="sa-back-link">%2$s</span></h3>', $post->post_title, $back_link);

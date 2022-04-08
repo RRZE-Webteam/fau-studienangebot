@@ -95,8 +95,7 @@ class FAU_Studiengaenge_Shortcode {
 
         ob_start();
         ?>
-        <div class="row">
-            <div class="span9">
+<div  class="fau-studienangebot">  
                 <div id="studienangebot-result">
                     <?php
                     if(get_query_var('studiengang')) {
@@ -108,14 +107,12 @@ class FAU_Studiengaenge_Shortcode {
                     }
                     ?>
                 </div>
-            </div>
-        </div>
 
         <div id="loading">
             <div id="loading-background"></div>
             <div id="loading-spinner"></div>
         </div>
-
+	</div>
         <?php
         return ob_get_clean();
     }
