@@ -1,0 +1,69 @@
+{
+  "name": "FAU-Studienangebot",
+  "version": "2.5.4",
+  "description": "Verwaltung des Studienangebots der FAU.",
+  "main": "fau-studienangebot.php",
+  "maincss": "fau-studienangebot.css",
+  "mainjs": "fau-studienangebot.js",
+  "textdomain": "studienangebot",
+  "scripts": {
+    "start": "gulp",
+    "dev": "gulp dev",
+    "build": "gulp build",
+    "pot": "gulp pot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RRZE-Webteam/fau-studienangebot",
+    "issues": "https://github.com/RRZE-Webteam/fau-studienangebot/issues",
+    "clone": "git+https://github.com/RRZE-Webteam/fau-studienangebot.git"
+  },
+  "browserslist": [
+    "last 3 years"
+  ],
+  "supports": {
+    "email": "webmaster@fau.de"
+  },
+  "author": {
+    "name": "RRZE-Webteam <webmaster@fau.de>",
+    "url": "https://www.wordpress.rrze.fau.de/person/webmaster"
+  },
+  "compatibility": {
+    "wprequires": "5.9",
+    "wptestedup": "6.0",
+    "phprequires": "7.4"
+  },
+  "license": "GNU General Public License v3",
+  "source": {
+    "js": "./src/js/",
+    "sass": "./src/sass/"
+  },
+  "target": {
+	"css": "./css",
+	"js": "./js"
+  },
+
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/register": "^7.12.10",
+    "autoprefixer": "^10.2.3",
+    "cssnano": "^5.0.13",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-bump": "^3.2.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-dart-sass": "^1.0.2",
+    "gulp-header": "^2.0.9",
+    "gulp-postcss": "^9.0.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-replace": "^1.0.0",
+    "gulp-sass": "^5.0.0",
+    "gulp-touch-cmd": "0.0.1",
+    "gulp-uglify": "^3.0.2",
+    "gulp-wp-pot": "^2.5.0",
+    "sass": "^1.42.1",
+    "semver": "^7.3.4",
+    "yargs": "^16.2.0"
+  }
+}
