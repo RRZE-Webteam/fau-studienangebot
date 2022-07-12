@@ -118,7 +118,6 @@ class FAU_Studienangebot_Shortcode {
 	    </div>
 
 	    <div id="loading">
-		<div id="loading-background"></div>
 		<div id="loading-spinner"></div>
 	    </div>
 	</div>
@@ -321,10 +320,10 @@ class FAU_Studienangebot_Shortcode {
         <div class="col-xs-12 col-sm-3">
 
             <form id="studienangebot" action="<?php the_permalink(); ?>" method="get" role="search" aria-controls="studienangebot-result" data-filtertoggle="<?php _e('Filter ein/ausblenden', self::$textdomain); ?>">
-                <h3><?php _e('Studiengang', self::$textdomain); ?></h3>
+                <h3 id="header-auswahl"><?php _e('Studiengang', self::$textdomain); ?></h3>
                 <?php $terms = get_terms('studiengang', array('pad_counts' => true, 'hide_empty' => 1)); ?>
                 <p>
-                    <select name="<?php echo self::prefix; ?>studiengang[]" id="studiengang_category">
+                    <select aria-labelledby="header-auswahl" name="<?php echo self::prefix; ?>studiengang[]" id="studiengang_category">
                         <option value="0"><?php _e('Alle Studiengänge', self::$textdomain); ?></option>
                         <?php foreach ($terms as $term): ?>
                             <?php $selected = in_array($term->slug, isset($this->taxs['studiengang']) ? $this->taxs['studiengang'] : array()); ?>
