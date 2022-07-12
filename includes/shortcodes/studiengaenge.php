@@ -109,7 +109,6 @@ class FAU_Studiengaenge_Shortcode {
                 </div>
 
         <div id="loading">
-            <div id="loading-background"></div>
             <div id="loading-spinner"></div>
         </div>
 	</div>

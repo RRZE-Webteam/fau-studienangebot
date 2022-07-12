@@ -4,7 +4,7 @@
 Plugin Name:     FAU-Studienangebot
 Plugin URI:      https://github.com/RRZE-Webteam/fau-studienangebot
 Description:     Verwaltung des Studienangebots der FAU.
-Version:         2.5.4
+Version:         2.5.5
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
