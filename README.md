@@ -1,19 +1,23 @@
-FAU-STUDIENANGEBOT
-==================
+# FAU-Studienangebot
 
-WordPress Plugin
-----------------
+Verwaltung des Studienangebots der FAU
 
-Studiengangsdatenbank
+## Download 
 
-Entwickler und Projektbeteiligte
-- Rolf v. d. Forst, rolf.v.d.forst@fau.de
-- Cathrin Gräf, cathrin.graef@fau.de
-- Wolfgang Wiese, wolfgang.wiese@fau.de
+GitHub-Repo: https://github.com/RRZE-Webteam/fau-studienangebot
 
 
-== CSS file compiled by SASS
+## Autor 
+RRZE-Webteam , http://www.rrze.fau.de
 
-Use to compile:
-  --style compressed --compass --sourcemap=none
+## Copryright
+
+GNU General Public License (GPL) Version 3
+
+
+## Zweck 
+
+Ausgabe von Studiengangsdaten auf einer Webseite.
+
+
 

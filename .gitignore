@@ -1,1 +1,11 @@
-/nbproject/*
+nbproject
+node_modules
+.idea*
+.sass-cache*
+/package-lock.json
+tmp
+.vscode/sftp.json
+*.map
+/npm-debug.log
+.DS_Store
+Browse.plb

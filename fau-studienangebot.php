@@ -4,13 +4,13 @@
 Plugin Name:     FAU-Studienangebot
 Plugin URI:      https://github.com/RRZE-Webteam/fau-studienangebot
 Description:     Verwaltung des Studienangebots der FAU.
-Version:         2.5.3
+Version:         2.5.4
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
 License URI:     http://www.gnu.org/licenses/gpl-2.0.html
 Domain Path:     /languages
-Text Domain:     cms-workflow
+Text Domain:     studienangebot
 */
 
 add_action('plugins_loaded', array('FAU_Studienangebot', 'instance'));
@@ -20,7 +20,7 @@ register_deactivation_hook(__FILE__, array('FAU_Studienangebot', 'deactivation')
 
 class FAU_Studienangebot {
 
-    const version = '2.5.2';
+    const version = '2.5.5';
     const option_name = '_fau_studienangebot';
     const version_option_name = '_fau_studienangebot_version';
     const post_type = 'studienangebot';
@@ -54,8 +54,8 @@ class FAU_Studienangebot {
     protected static $instance = null;
 
     const textdomain = 'studienangebot';
-    const php_version = '7.3'; // Minimal erforderliche PHP-Version
-    const wp_version = '5.5'; // Minimal erforderliche WordPress-Version
+    const php_version = '7.4'; // Minimal erforderliche PHP-Version
+    const wp_version = '5.9'; // Minimal erforderliche WordPress-Version
 
     public static function instance() {
         if (is_null(self::$instance)) {
@@ -1101,8 +1101,8 @@ class FAU_Studienangebot {
 
 
     public static function register_script() {
-        wp_register_script('fa-sa-js', plugins_url('/js/studienangebot.min.js', __FILE__),  array('jquery'),  self::version, true);
-        wp_register_style('fa-sa-style', plugins_url('/css/studienangebot.css', __FILE__ ),  array(),  self::version);
+        wp_register_script('fa-sa-js', plugins_url('/js/fau-studienangebot.js', __FILE__),  array('jquery'),  self::version, true);
+        wp_register_style('fa-sa-style', plugins_url('/css/fau-studienangebot.css', __FILE__ ),  array(),  self::version);
     }
     public static function print_script() {
 	wp_enqueue_script('fa-sa-js');
